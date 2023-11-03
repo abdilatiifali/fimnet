@@ -9,6 +9,27 @@ use Illuminate\Support\Facades\Route;
 use LaravelDaily\Invoices\Classes\InvoiceItem;
 use LaravelDaily\Invoices\Classes\Party;
 use LaravelDaily\Invoices\Invoice;
+use Illuminate\Http\Request;
+
+Route::post("/login", function (Request $request) { 
+    $credentials = $request->validate([
+        'email' => ['required', 'email'],
+        'password' => ['required'],
+    ]);
+
+    if (\Auth::attempt($credentials)) {
+        $request->session()->regenerate();
+
+        return response()->json([
+            'status' => 200,
+            'authenticated' => true,
+        ]);
+    }
+    return response()->json([
+        'status' => 200,
+        'message' => 'login',
+    ]);
+});
 
 Route::get("/statement/{customer}", [PdfController::class, 'index']);
 
