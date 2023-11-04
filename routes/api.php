@@ -28,6 +28,5 @@ Route::get("/client", function () {
     $customer = CustomerResource::make(
         Customer::findOrFail(1)->load('subscriptions')
     );
-
     return $customer;
-});
+})->middleware('auth:sanctum');

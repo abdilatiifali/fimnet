@@ -17,18 +17,12 @@ Route::post("/login", function (Request $request) {
         'password' => ['required'],
     ]);
 
-    if (\Auth::attempt($credentials)) {
+    if (\Auth::guard()->attempt($credentials)) {
         $request->session()->regenerate();
-
-        return response()->json([
-            'status' => 200,
-            'authenticated' => true,
-        ]);
+        return response()->json([], 204);
     }
-    return response()->json([
-        'status' => 200,
-        'message' => 'login',
-    ]);
+    return response()->json(['error' => 'Invalid credentials']);
+
 });
 
 Route::get("/statement/{customer}", [PdfController::class, 'index']);
