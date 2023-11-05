@@ -25,8 +25,7 @@ Route::get('/customers/{houseId}', function (Request $request, $houseId) {
 });
 
 Route::get("/client", function () {
-    $customer = CustomerResource::make(
-        Customer::findOrFail(1)->load('subscriptions')
+    return CustomerResource::make(
+        \Auth::guard('api')->user()->load('subscriptions')
     );
-    return $customer;
-})->middleware('auth:sanctum');
+})->middleware(['auth:sanctum']);

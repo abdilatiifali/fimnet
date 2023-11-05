@@ -24,6 +24,10 @@ class CustomerPolicy
         return true;
     }
 
+    public function delete(User $user)
+    {
+        return $user->isAdmin();
+    }
     public function attachAnyMonth(User $user)
     {
         return $user->isAdmin();

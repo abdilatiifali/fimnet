@@ -90,15 +90,12 @@ class Customer extends Resource
             Text::make('Name'),
             Text::make('Account Number', 'mpesaId'),
 
-            Text::make('Username')
-                ->fillUsing(function ($request, $model, $attribute, $requestAttribute) {
-                    $model->{$attribute} = 'Abdi';
-                }),
-
+            Text::make('Username'),
+            
             Text::make('Password')
                 ->fillUsing(function ($request, $model, $attribute, $requestAttribute) {
-                    $model->{$attribute} = 'abdi ali';
-                }),
+                    $model->{$attribute} =  bcrypt('abdi ali');
+            })->onlyOnForms(),
 
             Text::make('Ip Address', 'ip_address'),
             Text::make('Units', 'appartment'),

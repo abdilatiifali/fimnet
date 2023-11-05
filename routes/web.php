@@ -13,15 +13,19 @@ use Illuminate\Http\Request;
 
 Route::post("/login", function (Request $request) { 
     $credentials = $request->validate([
-        'email' => ['required', 'email'],
+        'username' => ['required'],
         'password' => ['required'],
     ]);
 
-    if (\Auth::guard()->attempt($credentials)) {
+    if (\Auth::guard('api')->attempt($credentials)) {
         $request->session()->regenerate();
+
         return response()->json([], 204);
     }
-    return response()->json(['error' => 'Invalid credentials']);
+
+    return response()->json([
+        'error' => 'Invalid credentials'
+    ], 401);
 
 });
 

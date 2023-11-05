@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Providers\CustomerUserProvider;
+use App\Services\SimpleHasher;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -23,7 +25,5 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
-
-        //
     }
 }
