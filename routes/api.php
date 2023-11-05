@@ -29,3 +29,7 @@ Route::get("/client", function () {
         \Auth::guard('api')->user()->load('subscriptions')
     );
 })->middleware(['auth:sanctum']);
+
+Route::get("/user", function () {
+    return \Auth::guard('api')->user()->name;
+})->middleware(['auth:sanctum']);
