@@ -21,6 +21,7 @@ class CustomerResource extends JsonResource
             'phone_number' => $this->phone_number,
             'house' => $this->house->name,
             'status' => CustomerStatus::from($this->status)->name,
+            'avatar' => $this->defaultProfilePhotoUrl(),
             'stats' => [
                 ['name' => 'Balance','value' => number_format($this->balance())],
                 ['name' => 'Package','value' => $this->package, 'unit' => 'MBPS'],

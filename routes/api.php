@@ -31,5 +31,8 @@ Route::get("/client", function () {
 })->middleware(['auth:sanctum']);
 
 Route::get("/user", function () {
-    return \Auth::guard('api')->user()->name;
+    return response()->json([
+        'name' => \Auth::guard('api')->user()->name,
+        'photo' =>  \Auth::guard('api')->user()->defaultProfilePhotoUrl(),
+    ]);
 })->middleware(['auth:sanctum']);
