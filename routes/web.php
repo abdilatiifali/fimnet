@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Route;
 use LaravelDaily\Invoices\Classes\InvoiceItem;
 use LaravelDaily\Invoices\Classes\Party;
 use LaravelDaily\Invoices\Invoice;
+use App\Enums\PaymentType;
 
 Route::post("/login", [AuthController::class, 'store']);
 Route::post("/logout", [AuthController::class, 'destory']);
@@ -57,4 +58,22 @@ Route::get('/invoice/{id}', function ($id) {
             ->addItems($items)
             ->stream();
 
+});
+
+Route::post("/callback", function () {
+    $amount = request('Body')['stkCallback']['CallbackMetadata']['Item'][0]['Value'];
+
+    $pivot = Subscription::where('customer_id', 2)
+                ->where('month_id', now()->month)
+                ->where('session_id', config('app.year'))
+                ->first();
+
+    $pivot->update([
+        'amount_paid' => intval($amount) + $pivot->amount_paid,
+        'payment_type' => PaymentType::mpesa->value,
+        'balance' => $pivot->amount - (intval($amount) + $pivot->amount_paid),
+        'paid' => true,
+    ]);
+
+    return 'done';
 });
