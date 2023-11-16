@@ -60,20 +60,6 @@ Route::get('/invoice/{id}', function ($id) {
 
 });
 
-Route::post("/callback", function () {
-    $amount = request('Body')['stkCallback']['CallbackMetadata']['Item'][0]['Value'];
+Route::post("/abdi", [PaymentsController::class, 'stkdpush']);
 
-    $pivot = Subscription::where('customer_id', 2)
-                ->where('month_id', now()->month)
-                ->where('session_id', config('app.year'))
-                ->first();
-
-    $pivot->update([
-        'amount_paid' => intval($amount) + $pivot->amount_paid,
-        'payment_type' => PaymentType::mpesa->value,
-        'balance' => $pivot->amount - (intval($amount) + $pivot->amount_paid),
-        'paid' => true,
-    ]);
-
-    return 'done';
-});
+Route::post("/callback", [PaymentsController::class, 'callback']);

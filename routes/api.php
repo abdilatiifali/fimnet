@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PaymentsController;
 use App\Http\Resources\CustomerResource;
 use App\Models\Customer;
 use Illuminate\Http\Request;
@@ -36,3 +37,5 @@ Route::get("/user", function () {
         'photo' =>  \Auth::guard('api')->user()->defaultProfilePhotoUrl(),
     ]);
 })->middleware(['auth:sanctum']);
+
+Route::post("/sdkpush", [PaymentsController::class, 'stkdpush'])->middleware(['auth:sanctum']);

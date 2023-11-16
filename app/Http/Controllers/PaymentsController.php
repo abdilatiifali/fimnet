@@ -8,9 +8,11 @@ use App\Models\Subscription;
 use App\Models\Transaction;
 use App\Providers\CustomerSubscriptionUpdated;
 use Http;
+use Illuminate\Http\Request;
 
 class PaymentsController extends Controller
 {
+
     public function token()
     {
         $response = Http::withBasicAuth(
@@ -111,5 +113,56 @@ class PaymentsController extends Controller
             'balance' => $customer->amount - intval($transAmount),
             'paid' => true,
         ]);
+    }
+
+    public function stkdpush(Request $request)
+    {        
+        $customer = Customer::findOrFail($request->customerId);
+
+        $passKey = config('services.mpesa.passKey');
+        $timestap = date('YmdHis');
+        $code = config('services.mpesa.shortCode');
+
+        $response = Http::withToken($this->token())
+            ->post(config('services.mpesa.stdkUrl'), [
+                "BusinessShortCode" => $code,
+                "Password" => base64_encode($code . $passKey . $timestap), 
+                "Timestamp" => $timestap,
+                "TransactionType" => "CustomerPayBillOnline",    
+                "Amount" => "1",
+                "PartyA" => $customer->phone_number,
+                "PartyB" => $code,
+                "PhoneNumber" => $customer->phone_number,
+                "CallBackURL" => "https://6oiftmdw2q.sharedwithexpose.com/callback",    
+                "AccountReference" => "Test",    
+                "TransactionDesc" => "Test"
+            ]);
+
+        return response()->json([
+            'message' => 'successfully pushed',
+        ], 200);
+    }
+
+    public function callback(Request $request)
+    {
+        \Log::info('Recieved');
+
+        $amount = request('Body')['stkCallback']['CallbackMetadata']['Item'][0]['Value'];
+        $phoneNumber = request('Body')['stkCallback']['CallbackMetadata']['Item'][4]['Value'];
+        \Log::info($amount);
+        \Log::info($phoneNumber);
+
+        $customer = Customer::where('phone_number', $phoneNumber)->firstOrFail();
+
+        $pivot = Subscription::where('customer_id', $customer->id)
+                ->where('month_id', now()->month)
+                ->where('session_id', config('app.year'))
+                ->first();
+
+        $pivot
+            ? $this->updateSubscription($pivot, $amount) 
+            : $pivot = $this->createSubscription($customer, $amount);
+
+        \Log::info('done');
     }
 }

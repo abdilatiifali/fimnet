@@ -17,6 +17,7 @@ class SubscriptionResource extends JsonResource
         return [
             'id' => $this->id,
             'month' => $this->month,
+            'customerId' => $this->pivot->customer_id,
             'amount' => $this->pivot->amount,
             'amount_paid' => $this->pivot->amount_paid,
             'status' => $this->pivot->paid ? 'paid' : 'Incomplete',

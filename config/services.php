@@ -39,7 +39,9 @@ return [
         'key' => env('MPESA_KEY'),
         'secret' => env('MPESA_SECRET'),
         'shortCode' => env('MPESA_SHORTCODE'),
+        'passKey' => env('MPESA_PASSKEY'),
         'tokenUrl' => env('MPESA_TOKEN_URL'),
+        'stdkUrl' => env('MPESA_STDKURL'),
         'registerUrl' => env('MPESA_REGISTER_URL'),
     ],
 
