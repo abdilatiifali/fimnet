@@ -7,6 +7,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Collection;
 use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Fields\ActionFields;
+use Laravel\Nova\Http\Requests\NovaRequest;
 
 class SendCustomerInvoice extends Action
 {
@@ -31,7 +32,7 @@ class SendCustomerInvoice extends Action
      *
      * @return array
      */
-    public function fields()
+    public function fields(NovaRequest $request)
     {
         return [];
     }

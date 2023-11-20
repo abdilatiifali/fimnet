@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Nova\Dashboards\Main;
 use App\Nova\Metrics\BalancePerMonth;
 use App\Nova\Metrics\CustomersPerDay;
 use App\Nova\Metrics\ExpectPerMonth;
@@ -80,7 +81,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
      */
     protected function dashboards()
     {
-        return [];
+        return [new Main];
     }
 
     /**
