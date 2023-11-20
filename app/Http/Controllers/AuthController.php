@@ -26,7 +26,7 @@ class AuthController extends Controller
         ], 401);
     }
 
-    public function destory()
+    public function destory(Request $request)
     {
         Auth::guard('api')->logout();
 

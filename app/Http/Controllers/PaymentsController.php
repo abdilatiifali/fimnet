@@ -129,11 +129,11 @@ class PaymentsController extends Controller
                 "Password" => base64_encode($code . $passKey . $timestap), 
                 "Timestamp" => $timestap,
                 "TransactionType" => "CustomerPayBillOnline",    
-                "Amount" => "1",
+                "Amount" => $customer->amount,
                 "PartyA" => $customer->phone_number,
                 "PartyB" => $code,
                 "PhoneNumber" => $customer->phone_number,
-                "CallBackURL" => "https://6oiftmdw2q.sharedwithexpose.com/callback",    
+                "CallBackURL" => config('app.url') . '/callback',   
                 "AccountReference" => "Test",    
                 "TransactionDesc" => "Test"
             ]);
@@ -146,7 +146,7 @@ class PaymentsController extends Controller
     public function callback(Request $request)
     {
         \Log::info('Recieved');
-
+        \Log::info(request('Body'));
         $amount = request('Body')['stkCallback']['CallbackMetadata']['Item'][0]['Value'];
         $phoneNumber = request('Body')['stkCallback']['CallbackMetadata']['Item'][4]['Value'];
         \Log::info($amount);

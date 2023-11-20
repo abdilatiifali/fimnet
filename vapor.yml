@@ -1,16 +1,16 @@
-id: 52688
-name: jerry
+id: 54560
+name: abdilatiif
 environments:
     production:
         memory: 1024
         cli-memory: 512
-        domain: aflaxlink.com
-        database: jerry
-        runtime: 'php-8.2:al2-arm'
+        runtime: 'php-8.2:al2'
+        database: test
+        domain: abdilatiif.live
         build:
-            - 'composer install --no-dev'
+            - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev'
             - 'php artisan event:cache'
-            - 'npm install && npm run dev && rm -rf node_modules'
+            - 'npm ci && npm run prod && rm -rf node_modules'
         deploy:
             - 'php artisan migrate --force'
     staging:
@@ -18,6 +18,6 @@ environments:
         cli-memory: 512
         runtime: 'php-8.2:al2'
         build:
-            - 'composer install --no-dev'
+            - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install'
             - 'php artisan event:cache'
-            - 'npm install && npm run dev && rm -rf node_modules'
+            - 'npm ci && npm run dev && rm -rf node_modules'
