@@ -11,6 +11,7 @@ use App\Nova\Metrics\RevenuePerMonth;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Nova\Nova;
 use Laravel\Nova\NovaApplicationServiceProvider;
+use Illuminate\Support\Facades\Blade;
 
 class NovaServiceProvider extends NovaApplicationServiceProvider
 {
@@ -23,7 +24,13 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     {
         parent::boot();
 
-        Nova::style('abdi', asset('css/miami.css'));
+        Nova::footer(function ($request) {
+            return Blade::render('
+                @env(\'prod\')
+                    This is production!
+                @endenv
+            ');
+        });
     }
 
     /**

@@ -20,8 +20,14 @@ return [
     |
     */
 
+    'brand' => [
+        'logo' => resource_path('logo.svg')
+    ],
+
     'name' => env('NOVA_APP_NAME', env('APP_NAME')),
 
+    'license_key' => env('NOVA_LICENSE_KEY', ''),
+    
     /*
     |--------------------------------------------------------------------------
     | Nova Domain Name
