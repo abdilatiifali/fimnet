@@ -122,14 +122,13 @@ class Customer extends Resource
                         })->map([
                             'cash' => 'success',
                             'mpesa' => 'info',
-                            'akram' => 'warning',
                             '_' => 'danger',
                         ]),
                         Select::make('Payment Type', 'payment_type')
                             ->options([
                                 PaymentType::cash->value => 'Cash',
                                 PaymentType::mpesa->value => 'Mpesa',
-                                PaymentType::akram->value => 'Akram',
+                                PaymentType::_->value => '_',
                             ])
                             ->displayUsingLabels()
                             ->onlyOnForms()

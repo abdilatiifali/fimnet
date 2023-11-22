@@ -78,7 +78,7 @@ class Month extends Resource
                             ->options([
                                 PaymentType::cash->value => 'Cash',
                                 PaymentType::mpesa->value => 'Mpesa',
-                                PaymentType::akram->value => 'Akram',
+                                PaymentType::_->value => '_',
                             ])
                             ->displayUsingLabels()
                             ->onlyOnForms()
