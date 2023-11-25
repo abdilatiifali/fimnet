@@ -19,11 +19,11 @@ class ActiveCustomers extends Partition
         return $this->count($request, Customer::class, 'status')
                 ->label(function ($value) {
                     switch ($value) {
-                        case 1:
+                        case 'active':
                             return 'Active Customer';
-                        case 2:
+                        case 'blocked':
                             return 'Blocked Customer';
-                        case 3:
+                        case 'new':
                             return 'New Customer';
                     }
                 })->colors([

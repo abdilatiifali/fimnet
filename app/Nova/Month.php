@@ -71,7 +71,6 @@ class Month extends Resource
                         })->map([
                             'cash' => 'success',
                             'mpesa' => 'info',
-                            'akram' => 'warning',
                             '_' => 'danger',
                         ]),
                         Select::make('Payment Type', 'payment_type')

@@ -30,6 +30,7 @@ use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Fields\Password;
 use Maatwebsite\LaravelNovaExcel\Actions\DownloadExcel;
 
 class Customer extends Resource
@@ -78,24 +79,35 @@ class Customer extends Resource
     {
         return [
             ID::make(__('ID'), 'id')->sortable(),
-            Indicator::make('Status')->labels([
-                CustomerStatus::active->value => 'Active',
-                CustomerStatus::new->value => 'New',
-                CustomerStatus::blocked->value => 'Blocked',
-            ])->colors([
-                CustomerStatus::active->value => 'green',
-                CustomerStatus::blocked->value => 'red',
-                CustomerStatus::new->value => 'orange',
+            // Indicator::make('Status')->labels([
+            //     CustomerStatus::active->value => 'Active',
+            //     CustomerStatus::new->value => 'New',
+            //     CustomerStatus::blocked->value => 'Blocked',
+            // ])->colors([
+            //     CustomerStatus::active->value => 'green',
+            //     CustomerStatus::blocked->value => 'red',
+            //     CustomerStatus::new->value => 'orange',
+            // ]),
+            Badge::make('Status')->map([
+                CustomerStatus::blocked->value => 'danger',
+                CustomerStatus::new->value => 'info',
+                CustomerStatus::active->value => 'success',
             ]),
-            Text::make('Name'),
-            Text::make('Account Number', 'mpesaId'),
 
-            Text::make('Username'),
+            Text::make('Name'),
+
+            Text::make('Account Number', 'mpesaId')
+                ->rules('required'),
+
+            Text::make('Username')
+                ->rules('required')
+                ->creationRules('unique:customers,username')
+                ->updateRules('unique:customers,username,{{resourceId}}'),
             
-            Text::make('Password')
-                ->fillUsing(function ($request, $model, $attribute, $requestAttribute) {
-                    $model->{$attribute} =  bcrypt('abdi ali');
-            })->onlyOnForms(),
+            Password::make('Password')
+                ->onlyOnForms()
+                ->creationRules('required', 'string', 'min:8')
+                ->updateRules('nullable', 'string', 'min:8'),
 
             Text::make('Ip Address', 'ip_address'),
             Text::make('Units', 'appartment'),

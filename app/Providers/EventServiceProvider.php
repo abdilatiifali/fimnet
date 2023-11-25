@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Enums\CustomerStatus;
+use App\Listeners\SendCustomerCrediantials;
 use App\Models\Customer;
 use App\Models\Transaction;
 use App\Network\ApiRouter;
@@ -48,20 +49,12 @@ class EventServiceProvider extends ServiceProvider
 
         Pivot::updating(function ($pivot) {
             $pivot->balance = $pivot->amount - $pivot->amount_paid;
-
-            if ($pivot->paid && $pivot->month_id == 5) {
-                Transaction::record($pivot);
-            }
             
             event(new CustomerSubscriptionUpdated($pivot));
 
         });
 
         Customer::creating(function ($customer) {
-            if (! $customer->router || ! filter_var($customer->ip_address, FILTER_VALIDATE_IP)) {
-                return;
-            }
-            
             event(new CustomerCreated($customer));
         });
 

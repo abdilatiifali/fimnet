@@ -15,7 +15,8 @@ class Customer extends Authenticatable
 
     protected $casts = ['blocked_at' => 'datetime'];
 
-    protected $hidden = ['password', 'remember_token'];
+    protected $hidden = ['password'];
+
 
     public function subscriptions()
     {
