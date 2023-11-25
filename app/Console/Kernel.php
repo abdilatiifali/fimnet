@@ -19,7 +19,7 @@ class Kernel extends ConsoleKernel
                ->dailyAt('9:30');
 
         $schedule->command('disconnect:promise-customers')
-            ->dailyAt('9:30');
+            ->dailyAt('10:30');
             
         $schedule->command('send:payment-reminder')
             ->dailyAt('16:00');

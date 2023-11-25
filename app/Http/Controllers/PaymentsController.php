@@ -80,7 +80,7 @@ class PaymentsController extends Controller
                 ->first();
 
         $pivot
-            ? $this->updateSubscription($pivot, request('TransAmount')) 
+            ? $this->updateSubscription($customer, $pivot, request('TransAmount')) 
             : $pivot = $this->createSubscription($customer, request('TransAmount'));
 
         Transaction::record($pivot);
@@ -90,20 +90,33 @@ class PaymentsController extends Controller
         return 'done';
     }
 
-    public function updateSubscription($pivot, $transAmount)
+    public function updateSubscription($customer, $pivot, $transAmount)
     {
-        return $pivot->update([
+        $pivot = $pivot->update([
             'amount_paid' => intval($transAmount) + $pivot->amount_paid,
             'payment_type' => PaymentType::mpesa->value,
             'balance' => $pivot->amount - (intval($transAmount) + $pivot->amount_paid),
             'paid' => true,
         ]);
 
+        $this->updateCustomerBlockDay($customer);
+
+        return $pivot;
+
+    }
+
+    protected function updateCustomerBlockDay($customer) 
+    {
+        if (optional($customer->house)->block_day !== now()->day) {
+            $customer->update(['block_day' => now()->day]);
+        }
+
+        return;
     }
 
     public function createSubscription($customer, $transAmount)
     {
-        return Subscription::create([
+        $subscription = Subscription::create([
             'customer_id' => $customer->id,
             'month_id' => now()->month,
             'session_id' => config('app.year'),
@@ -113,6 +126,10 @@ class PaymentsController extends Controller
             'balance' => $customer->amount - intval($transAmount),
             'paid' => true,
         ]);
+
+        $this->updateCustomerBlockDay($customer);
+
+        return $subscription;
     }
 
     public function stkdpush(Request $request)
