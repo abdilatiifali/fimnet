@@ -83,7 +83,6 @@ class PaymentsController extends Controller
             ? $this->updateSubscription($customer, $pivot, request('TransAmount')) 
             : $pivot = $this->createSubscription($customer, request('TransAmount'));
 
-        Transaction::record($pivot);
 
         event(new CustomerSubscriptionUpdated($pivot));
 
@@ -179,6 +178,8 @@ class PaymentsController extends Controller
         $pivot
             ? $this->updateSubscription($pivot, $amount) 
             : $pivot = $this->createSubscription($customer, $amount);
+
+        event(new CustomerSubscriptionUpdated($pivot));
 
         \Log::info('done');
     }
