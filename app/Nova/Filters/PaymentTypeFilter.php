@@ -38,7 +38,6 @@ class PaymentTypeFilter extends Filter
         return [
             'Cash' => 'cash',
             'Mpesa' => 'mpesa',
-            'Akram' => 'akram',
         ];
     }
 }

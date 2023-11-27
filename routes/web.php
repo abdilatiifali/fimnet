@@ -1,8 +1,10 @@
 <?php
 
+use App\Enums\PaymentType;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PaymentsController;
 use App\Http\Controllers\PdfController;
+use App\Http\Controllers\QuotationController;
 use App\Models\Customer;
 use App\Models\Month;
 use App\Models\Subscription;
@@ -11,10 +13,10 @@ use Illuminate\Support\Facades\Route;
 use LaravelDaily\Invoices\Classes\InvoiceItem;
 use LaravelDaily\Invoices\Classes\Party;
 use LaravelDaily\Invoices\Invoice;
-use App\Enums\PaymentType;
 
 Route::post("/login", [AuthController::class, 'store']);
 Route::post("/logout", [AuthController::class, 'destory']);
+Route::get('/quotations/{id}', [QuotationController::class, 'show']);
 
 Route::get("/statement/{customer}", [PdfController::class, 'index']);
 

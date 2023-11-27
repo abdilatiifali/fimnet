@@ -28,15 +28,12 @@ class PaymentType extends Partition
                         return 'Cash';
                     case 'mpesa':
                         return 'Mpesa';
-                    case 'akram':
-                        return 'Akram';
                     default:
                         return;
                 }
             })->colors([
                 'Cash' => '#21b978',
                 'Mpesa' => '#03a9f4',
-                'Akram' => '#ffeb3b',
             ]);
     }
 

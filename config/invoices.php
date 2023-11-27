@@ -78,12 +78,12 @@ return [
          * Default attributes for Seller::class
          */
         'attributes' => [
-            'name' => 'Unicast Technology Limited',
-            'address' => 'Moonz Plaza, Office 204, Eastleigh, Nairobi, Kenya',
+            'name' => 'FIMNET COMMUNICATION LIMITED ',
+            'address' => 'JUJA ROAD',
             'code' => '1205-00610',
-            'phone' => '0722251796',
+            'phone' => '0745555220',
             'custom_fields' => [
-                'Paybill Number' => '4020627',
+                'Paybill Number' => '4002001',
             ],
         ],
     ],

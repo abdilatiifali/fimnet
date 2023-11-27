@@ -79,19 +79,11 @@ class Customer extends Resource
     {
         return [
             ID::make(__('ID'), 'id')->sortable(),
-            // Indicator::make('Status')->labels([
-            //     CustomerStatus::active->value => 'Active',
-            //     CustomerStatus::new->value => 'New',
-            //     CustomerStatus::blocked->value => 'Blocked',
-            // ])->colors([
-            //     CustomerStatus::active->value => 'green',
-            //     CustomerStatus::blocked->value => 'red',
-            //     CustomerStatus::new->value => 'orange',
-            // ]),
+
             Badge::make('Status')->map([
+                CustomerStatus::active->value => 'success',
                 CustomerStatus::blocked->value => 'danger',
                 CustomerStatus::new->value => 'info',
-                CustomerStatus::active->value => 'success',
             ]),
 
             Text::make('Name'),
