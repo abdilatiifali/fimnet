@@ -69,7 +69,7 @@ class EventServiceProvider extends ServiceProvider
 
             $subscription->update(['amount' => $totalAmount]);
         });
-        
+
 
         Pivot::creating(function ($pivot) {
             $customer = Customer::findOrFail($pivot->customer_id);
@@ -79,16 +79,23 @@ class EventServiceProvider extends ServiceProvider
 
         Pivot::updating(function ($pivot) {
             $pivot->balance = $pivot->amount - $pivot->amount_paid;
-            
-            event(new CustomerSubscriptionUpdated($pivot));
 
+            if ($pivot->amount_paid >= $pivot->amount) {    
+               event(new CustomerSubscriptionUpdated($pivot));
+               return;
+            }
+
+            return;
+            
         });
 
         Customer::creating(function ($customer) {
+            $customer->amount = $customer->package()->first()->price;
             event(new CustomerCreated($customer));
         });
 
         Customer::updating(function ($customer) {
+            $customer->amount = $customer->package()->first()->price;
             if (! $customer->router || ! filter_var($customer->ip_address, FILTER_VALIDATE_IP)) {
                 return;
             }
@@ -97,6 +104,7 @@ class EventServiceProvider extends ServiceProvider
                 ->openServer()
                 ->updateQueue($customer);
         });
+
     }
 
     /**

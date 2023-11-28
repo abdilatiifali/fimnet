@@ -98,19 +98,8 @@ class PaymentsController extends Controller
             'paid' => true,
         ]);
 
-        $this->updateCustomerBlockDay($customer);
-
         return $pivot;
 
-    }
-
-    protected function updateCustomerBlockDay($customer) 
-    {
-        if (optional($customer->house)->block_day !== now()->day) {
-            $customer->update(['block_day' => now()->day]);
-        }
-
-        return;
     }
 
     public function createSubscription($customer, $transAmount)
@@ -125,8 +114,6 @@ class PaymentsController extends Controller
             'balance' => $customer->amount - intval($transAmount),
             'paid' => true,
         ]);
-
-        $this->updateCustomerBlockDay($customer);
 
         return $subscription;
     }

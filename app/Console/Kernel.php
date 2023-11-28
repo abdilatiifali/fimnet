@@ -18,11 +18,11 @@ class Kernel extends ConsoleKernel
         $schedule->command('disconnect:customers')
                ->dailyAt('9:30');
 
-        $schedule->command('disconnect:promise-customers')
-            ->dailyAt('10:30');
-            
         $schedule->command('send:payment-reminder')
             ->dailyAt('16:00');
+
+        $schedule->command('disconnect:today')
+            ->dailyAt('1:38');
 
         $schedule->command('recurring:expense')
             ->monthly();

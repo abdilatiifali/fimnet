@@ -29,6 +29,7 @@ use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Select;
+use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Password;
 use Maatwebsite\LaravelNovaExcel\Actions\DownloadExcel;
@@ -104,16 +105,14 @@ class Customer extends Resource
             Text::make('Ip Address', 'ip_address'),
             Text::make('Units', 'appartment'),
             Number::make('Phone Number', 'phone_number'),
-            Currency::make('Amount'),
             BelongsTo::make('House'),
             BelongsTo::make('Router')->nullable(),
-
+            Currency::make('Amount')->exceptOnForms(),
+            BelongsTo::make('Package'),
             Text::make('Mpesa Id', 'mpesaId')->exceptOnForms()->nullable(),
             DateTime::make('Blocked At', 'blocked_at')->nullable()->hideFromIndex()->exceptOnForms(),
+            Date::make('Due Date', 'due_date')->nullable(),
 
-            Number::make('Package')->nullable()->hideFromIndex(),
-            Number::make('Block Day', 'block_day')->nullable()->hideFromIndex(),
-            
             BelongsToMany::make('Month', 'subscriptions')
                 ->fields(function () {
                     return [

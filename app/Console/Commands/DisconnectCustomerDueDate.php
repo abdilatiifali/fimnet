@@ -2,29 +2,28 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\DisconnectPromiseCustomers;
+use App\Enums\CustomerStatus;
 use App\Models\Customer;
 use App\Models\Router;
 use App\Models\Subscription;
 use App\Network\ApiRouter;
 use Illuminate\Console\Command;
-use App\Enums\CustomerStatus;
 
-class DisconnectPromiseCustomersOnTime extends Command
+class DisconnectCustomerDueDate extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'disconnect:promise-customers';
+    protected $signature = 'disconnect:today';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Disconnect Customers Who Promise To Pay On Time';
+    protected $description = 'Disconnect Customers who are disconneced today';
 
     /**
      * Execute the console command.
@@ -33,11 +32,10 @@ class DisconnectPromiseCustomersOnTime extends Command
      */
     public function handle()
     {
-
         $customerIds = Customer::where('status', CustomerStatus::active->value)
-                            ->where('block_day', now()->day)->pluck('id');
+                            ->where('due_date', now()->toDateString())->pluck('id');
 
-       $customerIds = Subscription::whereIn('customer_id', $customerIds)
+        $customerIds = Subscription::whereIn('customer_id', $customerIds)
                     ->where('amount', '>', 0)
                     ->where('paid', false)
                     ->where('session_id', config('app.year'))
@@ -51,7 +49,6 @@ class DisconnectPromiseCustomersOnTime extends Command
                         ->disconnectBy($customer);
             });
 
-        return 'done';
-
+        return info('done');
     }
 }

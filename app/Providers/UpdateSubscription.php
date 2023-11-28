@@ -27,10 +27,17 @@ class UpdateSubscription
     {
         $customer = Customer::findOrFail($event->pivot->customer_id);
 
-        if ($customer->mikrotik_id && $event->pivot->amount_paid > 0) {
-            ApiRouter::make($customer->router)
-                    ->openServer()
-                    ->reconnect($customer);
+        if (! $customer->mikrotik_id || ! $event->pivot->amount_paid > 0) {
+            return;
+        }
+
+        ApiRouter::make($customer->router)
+                ->openServer()
+                ->reconnect($customer);
+
+        if (optional($customer->house)->block_day !== now()->day) {
+            $customer->due_date = now()->addMonth()->format('d-M-Y');
+            $customer->saveQuietly();
         }
 
         return null;

@@ -13,7 +13,7 @@ class Customer extends Authenticatable
 
     protected $guarded = [];
 
-    protected $casts = ['blocked_at' => 'datetime'];
+    protected $casts = ['blocked_at' => 'datetime', 'due_date' => 'date'];
 
     protected $hidden = ['password'];
 
@@ -49,5 +49,10 @@ class Customer extends Authenticatable
         })->join(' '));
 
         return 'https://ui-avatars.com/api/?name=' . urlencode($name) . '&color=7F9CF5&background=EBF4FF';
+    }
+
+    public function package()
+    {
+        return $this->belongsTo(Package::class);
     }
 }

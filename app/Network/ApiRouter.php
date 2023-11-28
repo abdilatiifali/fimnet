@@ -126,11 +126,10 @@ class ApiRouter
 
         $response = $this->client->query($query)->read();
 
-        Customer::where('id', $customer->id)->update([
-            'mikrotik_id' => null,
-            'status' => CustomerStatus::active->value,
-            'blocked_at' => null,
-        ]);
+        $customer->mikrotik_id = null;
+        $customer->status = CustomerStatus::active->value;
+        $customer->blocked_at = null; 
+        $customer->saveQuietly();
 
         return $response;
     }
