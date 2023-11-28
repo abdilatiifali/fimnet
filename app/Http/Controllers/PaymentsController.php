@@ -132,7 +132,7 @@ class PaymentsController extends Controller
     }
 
     public function stkdpush(Request $request)
-    {        
+    { 
         $customer = Customer::findOrFail($request->customerId);
 
         $passKey = config('services.mpesa.passKey');
@@ -145,11 +145,11 @@ class PaymentsController extends Controller
                 "Password" => base64_encode($code . $passKey . $timestap), 
                 "Timestamp" => $timestap,
                 "TransactionType" => "CustomerPayBillOnline",    
-                "Amount" => $customer->amount,
+                "Amount" => $customer->balance(),
                 "PartyA" => $customer->phone_number,
                 "PartyB" => $code,
                 "PhoneNumber" => $customer->phone_number,
-                "CallBackURL" => config('app.url') . '/callback',   
+                "CallBackURL" => confg('app.url') . '/callback',
                 "AccountReference" => "Test",    
                 "TransactionDesc" => "Test"
             ]);
@@ -161,14 +161,24 @@ class PaymentsController extends Controller
 
     public function callback(Request $request)
     {
-        \Log::info('Recieved');
         \Log::info(request('Body'));
-        $amount = request('Body')['stkCallback']['CallbackMetadata']['Item'][0]['Value'];
-        $phoneNumber = request('Body')['stkCallback']['CallbackMetadata']['Item'][4]['Value'];
-        \Log::info($amount);
-        \Log::info($phoneNumber);
 
-        $customer = Customer::where('phone_number', $phoneNumber)->firstOrFail();
+        if (request('Body')['stkCallback']['ResultCode'] != 0) {
+            \Log::info('cancelled');
+            return;
+        }
+
+        $amount = request('Body')['stkCallback']['CallbackMetadata']['Item'][0]['Value'];
+        $phoneNumber = request('Body')['stkCallback']['CallbackMetadata']['Item'][3]['Value'];
+
+        \Log::info([$amount, $phoneNumber]);
+
+        $customer = Customer::where('phone_number', $phoneNumber)->first();
+
+        if (! $customer) {
+            \Log::inf('there is no a customer available');
+            return;
+        };
 
         $pivot = Subscription::where('customer_id', $customer->id)
                 ->where('month_id', now()->month)
@@ -176,7 +186,7 @@ class PaymentsController extends Controller
                 ->first();
 
         $pivot
-            ? $this->updateSubscription($pivot, $amount) 
+            ? $this->updateSubscription($customer, $pivot, $amount) 
             : $pivot = $this->createSubscription($customer, $amount);
 
         event(new CustomerSubscriptionUpdated($pivot));
