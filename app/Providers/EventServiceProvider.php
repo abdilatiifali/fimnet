@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Enums\CustomerStatus;
 use App\Listeners\SendCustomerCrediantials;
 use App\Models\Customer;
+use App\Models\Quotation;
 use App\Models\Transaction;
 use App\Network\ApiRouter;
 use Illuminate\Auth\Events\Registered;
@@ -40,6 +41,35 @@ class EventServiceProvider extends ServiceProvider
     public function boot()
     {
         parent::boot();
+
+        Quotation::creating(function ($pivot) {
+            $subscription = Subscription::where('customer_id', $pivot->customer_id)
+                ->where('month_id', now()->month)
+                ->where('session_id', config('app.year'))
+                ->first();
+
+            $totalAmount = 0;
+            foreach ($pivot->line_items as $item) {
+                $totalAmount += $item['amount'] * $item['quantity'];
+            }
+
+            $subscription->update(['amount' => $totalAmount]);
+        });
+
+        Quotation::updating(function ($pivot) {
+            $subscription = Subscription::where('customer_id', $pivot->customer_id)
+                ->where('month_id', now()->month)
+                ->where('session_id', config('app.year'))
+                ->first();
+
+            $totalAmount = 0;
+            foreach ($pivot->line_items as $item) {
+                $totalAmount += $item['amount'] * $item['quantity'];
+            }
+
+            $subscription->update(['amount' => $totalAmount]);
+        });
+        
 
         Pivot::creating(function ($pivot) {
             $customer = Customer::findOrFail($pivot->customer_id);

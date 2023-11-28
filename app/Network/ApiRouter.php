@@ -91,7 +91,7 @@ class ApiRouter
         }
         $this->updateMikrotikIds($mikrotikIds);
         $mikrotikIds = [];
-        // $this->addFirewallFilterToDropBlockedCustomers();
+        $this->addFirewallFilterToDropBlockedCustomers();
 
         return 'done';
     }
@@ -102,9 +102,11 @@ class ApiRouter
         foreach ($mikrotikIds as $id => $mikrotikId) {
             $updateSql .= "WHEN {$id} THEN '{$mikrotikId}' ";
         }
-        $updateSql .= 'END, status = '.CustomerStatus::blocked->value.' WHERE id IN ('.implode(',', array_keys($mikrotikIds)).')';
+
+        $updateSql .= "END, status = '" . CustomerStatus::blocked->value . "' WHERE id IN (" . implode(',', array_keys($mikrotikIds)) . ")";
 
         \DB::update($updateSql);
+
     }
 
     private function addFirewallFilterToDropBlockedCustomers()

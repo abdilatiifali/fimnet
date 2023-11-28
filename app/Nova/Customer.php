@@ -213,7 +213,6 @@ class Customer extends Resource
             new SendPaymentReminder,
             new SendCustomerStatement,
             new SendSms,
-
             (new ReconnectCustomers)
                 ->canSee(function ($request) {
                     return $request->user()->isAdmin();

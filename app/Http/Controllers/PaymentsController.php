@@ -149,7 +149,7 @@ class PaymentsController extends Controller
                 "PartyA" => $customer->phone_number,
                 "PartyB" => $code,
                 "PhoneNumber" => $customer->phone_number,
-                "CallBackURL" => confg('app.url') . '/callback',
+                "CallBackURL" => config('app.url') . '/callback',
                 "AccountReference" => "Test",    
                 "TransactionDesc" => "Test"
             ]);
@@ -162,7 +162,6 @@ class PaymentsController extends Controller
     public function callback(Request $request)
     {
         \Log::info(request('Body'));
-
         if (request('Body')['stkCallback']['ResultCode'] != 0) {
             \Log::info('cancelled');
             return;
@@ -192,5 +191,6 @@ class PaymentsController extends Controller
         event(new CustomerSubscriptionUpdated($pivot));
 
         \Log::info('done');
+        return 'done';
     }
 }
