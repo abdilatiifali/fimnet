@@ -92,12 +92,12 @@ class EventServiceProvider extends ServiceProvider
         });
 
         Customer::creating(function ($customer) {
-            $customer->amount = $customer->package()->first()->price;
+            $customer->amount = $customer->package->price;
             event(new CustomerCreated($customer));
         });
 
         Customer::updating(function ($customer) {
-            $customer->amount = $customer->package()->first()->price;
+            $customer->amount = $customer->package->price;
             if (! $customer->router || ! filter_var($customer->ip_address, FILTER_VALIDATE_IP)) {
                 return;
             }

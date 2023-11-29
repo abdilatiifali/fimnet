@@ -45,6 +45,7 @@ class Package extends Resource
         return [
             ID::make()->sortable(),
             Text::make('Name'),
+            Text::make('Speed'),
             Currency::make('Price')->Currency('KES'),
         ];
     }

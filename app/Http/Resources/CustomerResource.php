@@ -25,7 +25,7 @@ class CustomerResource extends JsonResource
             'balance' => number_format($this->balance()),
             'stats' => [
                 ['name' => 'Balance','value' => number_format($this->balance()), 'unit' => 'KSH'],
-                ['name' => 'Package','value' => $this->package, 'unit' => 'MBPS'],
+                ['name' => 'Package','value' => $this->package->speed, 'unit' => ''],
             ],
             'unit' => $this->appartment,
             'account' => $this->mpesaId,

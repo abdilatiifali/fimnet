@@ -70,7 +70,7 @@ class ApiRouter
         $customers = $customers->lazy();
 
         $mikrotikIds = [];
-        
+
         foreach ($customers as $customer) {
              if ($customer->balance <= 0) {
                 continue;
@@ -153,7 +153,9 @@ class ApiRouter
     {
         $customer = $customer->load('house');
 
-        $package = $customer->package ?? $this->getDefaultSpeed();
+        $package = 
+            (int) filter_var($customer?->package->speed, FILTER_SANITIZE_NUMBER_INT)
+            ?? $this->getDefaultSpeed();
 
         $item = $this->isIpAddressExsistInTheQueue($customer->ip_address);
 
@@ -163,7 +165,7 @@ class ApiRouter
         }
 
         $query = (new Query('/queue/simple/add'))
-                ->equal('name', $customer->name.' '.$customer->phone_number.' '.$customer->house->name.' '.$customer->appartment)
+                ->equal('name', $customer->mpesaId)
                 ->equal('target', $customer->ip_address)
                 ->equal('max-limit', "0/${package}M");
 
@@ -192,12 +194,14 @@ class ApiRouter
 
     public function updateCustomer($customer, $item)
     {
-        $package = $customer->package ?? $this->getDefaultSpeed();
+        $package = 
+            (int) filter_var($customer?->package->speed, FILTER_SANITIZE_NUMBER_INT)
+            ?? $this->getDefaultSpeed();
 
         return $this->client->query(
             (new Query('/queue/simple/set'))
                 ->equal('.id', $item['.id'])
-                ->equal('name', $customer->name.' '.$customer->phone_number.' '.$customer->house->name.' '.$customer->appartment)
+                ->equal('name', $customer->mpesaId)
                 ->equal('target', $customer->ip_address)
                 ->equal('max-limit', "0/${package}M")
         )->read();
