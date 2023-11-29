@@ -72,15 +72,17 @@ class EventServiceProvider extends ServiceProvider
 
 
         Pivot::creating(function ($pivot) {
-            $customer = Customer::findOrFail($pivot->customer_id);
-            $customer->status = CustomerStatus::active->value;
-            $customer->saveQuietly();
+            if ($pivot->amount_paid >= $pivot->amount && now()->month == $pivot->month_id) {
+                $customer = Customer::findOrFail($pivot->customer_id);
+                $customer->status = CustomerStatus::active->value;
+                $customer->saveQuietly();
+            }
         });
 
         Pivot::updating(function ($pivot) {
             $pivot->balance = $pivot->amount - $pivot->amount_paid;
 
-            if ($pivot->amount_paid >= $pivot->amount) {    
+            if ($pivot->amount_paid >= $pivot->amount && now()->month == $pivot->month_id) {    
                event(new CustomerSubscriptionUpdated($pivot));
                return;
             }

@@ -12,9 +12,9 @@ use RouterOS\Query;
 
 class ApiRouter
 {
-    private $router;
+    protected $router;
 
-    private $client;
+    protected $client;
 
     public function __construct($router)
     {
@@ -68,9 +68,13 @@ class ApiRouter
     public function disconnect($customers)
     {
         $customers = $customers->lazy();
-        $mikrotikIds = [];
 
+        $mikrotikIds = [];
+        
         foreach ($customers as $customer) {
+             if ($customer->balance <= 0) {
+                continue;
+             }
             try {
                 $response = $this->blockIpAddress($customer);
                 $mikrotikIds[$customer->id] = $response['after']['ret'] ?? null;
@@ -89,6 +93,7 @@ class ApiRouter
                 }
             }
         }
+
         $this->updateMikrotikIds($mikrotikIds);
         $mikrotikIds = [];
         $this->addFirewallFilterToDropBlockedCustomers();
@@ -96,7 +101,7 @@ class ApiRouter
         return 'done';
     }
 
-    private function updateMikrotikIds(&$mikrotikIds)
+    protected function updateMikrotikIds(&$mikrotikIds)
     {
         $updateSql = 'UPDATE customers SET blocked_at = "'.now().'", mikrotik_id = CASE id ';
         foreach ($mikrotikIds as $id => $mikrotikId) {
@@ -109,7 +114,7 @@ class ApiRouter
 
     }
 
-    private function addFirewallFilterToDropBlockedCustomers()
+    protected function addFirewallFilterToDropBlockedCustomers()
     {
         $query = (new Query('/ip/firewall/filter/add'))
                     ->equal('chain', 'forward')

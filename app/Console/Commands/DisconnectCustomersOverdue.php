@@ -36,9 +36,10 @@ class DisconnectCustomersOverdue extends Command
     {
         $housesId = House::where('block_day', now()->day)->pluck('id');
         $session = Session::where('year', now()->year)->firstOrFail();
+
         $customerIds = Customer::whereIn('house_id', $housesId)
                             ->where('status', CustomerStatus::active->value)
-                            ->where('block_day', null)
+                            ->where('due_date', null)
                             ->pluck('id');
 
         $batchSize = 50;

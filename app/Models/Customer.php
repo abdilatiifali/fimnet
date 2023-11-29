@@ -17,7 +17,8 @@ class Customer extends Authenticatable
 
     protected $hidden = ['password'];
 
-
+    protected $appends = ['balance'];
+    
     public function subscriptions()
     {
         return $this->belongsToMany(Month::class, 'subscriptions')
@@ -34,6 +35,11 @@ class Customer extends Authenticatable
     public function router()
     {
         return $this->belongsTo(Router::class);
+    }
+
+    public function getBalanceAttribute()
+    {
+        return $this->balance();
     }
 
     public function balance()
