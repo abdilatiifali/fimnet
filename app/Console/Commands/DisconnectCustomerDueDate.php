@@ -44,9 +44,11 @@ class DisconnectCustomerDueDate extends Command
 
         Customer::whereIn('id', $customerIds)
             ->each(function ($customer) {
-                ApiRouter::make(Router::findOrFail($customer->router_id))
-                        ->openServer()
-                        ->disconnectBy($customer);
+                if ($customer->balance() > 0) {
+                    ApiRouter::make(Router::findOrFail($customer->router_id))
+                            ->openServer()
+                            ->disconnectBy($customer);
+                }
             });
 
         return info('done');
