@@ -16,7 +16,6 @@ class BalancePerCustomer extends Value
     /**
      * Calculate the value of the metric.
      *
-     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
      * @return mixed
      */
     public function calculate(NovaRequest $request)
@@ -26,8 +25,8 @@ class BalancePerCustomer extends Value
         $amount = Subscription::where('customer_id', $customerId)->sum('balance');
 
         return $this->result($amount)
-                ->allowZeroResult()
-                ->format('0,0');
+            ->allowZeroResult()
+            ->format('0,0');
     }
 
     /**

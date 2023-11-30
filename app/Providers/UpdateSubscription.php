@@ -20,7 +20,6 @@ class UpdateSubscription
     /**
      * Handle the event.
      *
-     * @param  \App\Providers\CustomerSubscriptionUpdated  $event
      * @return void
      */
     public function handle(CustomerSubscriptionUpdated $event)
@@ -32,8 +31,8 @@ class UpdateSubscription
         }
 
         ApiRouter::make($customer->router)
-                ->openServer()
-                ->reconnect($customer);
+            ->openServer()
+            ->reconnect($customer);
 
         if (optional($customer->house)->block_day !== now()->day) {
             $customer->due_date = now()->addMonth()->format('d-M-Y');

@@ -32,9 +32,9 @@ class DistrictRevenueMoney extends Trend
 
         Month::all()->each(function ($month) use ($total, $customers) {
             $amount = Subscription::where('session_id', session('year'))
-                        ->where('month_id', $month->id)
-                        ->whereIn('customer_id', $customers)
-                        ->sum('amount_paid');
+                ->where('month_id', $month->id)
+                ->whereIn('customer_id', $customers)
+                ->sum('amount_paid');
 
             $total->put($month->month, $amount);
         });

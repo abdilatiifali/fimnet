@@ -5,7 +5,6 @@ namespace App\Console\Commands;
 use App\Imports\DailyReportExport;
 use App\Models\Transaction;
 use Illuminate\Console\Command;
-use App\Mail\SendDailyReport as DailyReport;
 
 class SendDailyReport extends Command
 {
@@ -33,10 +32,10 @@ class SendDailyReport extends Command
         $today = now()->format('Y-m-d');
 
         $transactions = Transaction::whereBetween(
-            'created_at', [$today . ' 00:00:00', now()->format('Y-m-d H:i:s')]
+            'created_at', [$today.' 00:00:00', now()->format('Y-m-d H:i:s')]
         )->get();
 
-        $fileName =  now()->toDateString() . '-' . 'customers.xlsx';
+        $fileName = now()->toDateString().'-'.'customers.xlsx';
 
         \Excel::store(
             new DailyReportExport($transactions), $fileName, 's3'

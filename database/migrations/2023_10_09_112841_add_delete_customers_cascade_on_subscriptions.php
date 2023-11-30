@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::table('subscriptions', function (Blueprint $table) {
             $table->dropForeign(['customer_id']);
-            
+
             // Recreate the foreign key constraint without ON DELETE CASCADE
             $table->foreign('customer_id')
                 ->references('id')

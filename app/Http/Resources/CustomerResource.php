@@ -3,7 +3,6 @@
 namespace App\Http\Resources;
 
 use App\Enums\CustomerStatus;
-use App\Http\Resources\SubscriptionResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CustomerResource extends JsonResource
@@ -24,8 +23,8 @@ class CustomerResource extends JsonResource
             'avatar' => $this->defaultProfilePhotoUrl(),
             'balance' => number_format($this->balance()),
             'stats' => [
-                ['name' => 'Balance','value' => number_format($this->balance()), 'unit' => 'KSH'],
-                ['name' => 'Package','value' => $this->package->speed, 'unit' => ''],
+                ['name' => 'Balance', 'value' => number_format($this->balance()), 'unit' => 'KSH'],
+                ['name' => 'Package', 'value' => $this->package->speed, 'unit' => ''],
             ],
             'unit' => $this->appartment,
             'account' => $this->mpesaId,

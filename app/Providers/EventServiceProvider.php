@@ -3,10 +3,8 @@
 namespace App\Providers;
 
 use App\Enums\CustomerStatus;
-use App\Listeners\SendCustomerCrediantials;
 use App\Models\Customer;
 use App\Models\Quotation;
-use App\Models\Transaction;
 use App\Network\ApiRouter;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -70,7 +68,6 @@ class EventServiceProvider extends ServiceProvider
             $subscription->update(['amount' => $totalAmount]);
         });
 
-
         Pivot::creating(function ($pivot) {
             if ($pivot->amount_paid >= $pivot->amount && now()->month == $pivot->month_id) {
                 $customer = Customer::findOrFail($pivot->customer_id);
@@ -82,13 +79,12 @@ class EventServiceProvider extends ServiceProvider
         Pivot::updating(function ($pivot) {
             $pivot->balance = $pivot->amount - $pivot->amount_paid;
 
-            if ($pivot->amount_paid >= $pivot->amount && now()->month == $pivot->month_id) {    
-               event(new CustomerSubscriptionUpdated($pivot));
-               return;
+            if ($pivot->amount_paid >= $pivot->amount && now()->month == $pivot->month_id) {
+                event(new CustomerSubscriptionUpdated($pivot));
+
+                return;
             }
 
-            return;
-            
         });
 
         Customer::creating(function ($customer) {

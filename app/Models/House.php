@@ -28,8 +28,8 @@ class House extends Model
 
         Month::all()->each(function ($month) use ($total, $customers) {
             $amount = Subscription::where('month_id', $month->id)
-                        ->whereIn('customer_id', $customers)
-                        ->sum('balance');
+                ->whereIn('customer_id', $customers)
+                ->sum('balance');
 
             $total->push($amount);
         });

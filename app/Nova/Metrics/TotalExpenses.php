@@ -18,7 +18,6 @@ class TotalExpenses extends Value
     /**
      * Calculate the value of the metric.
      *
-     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
      * @return mixed
      */
     public function calculate(NovaRequest $request)
@@ -30,8 +29,8 @@ class TotalExpenses extends Value
         $amount = Expense::where('month_id', $currentMonth)->sum('amount');
 
         return $this->result($amount)
-                ->allowZeroResult()
-                ->format('0,0');
+            ->allowZeroResult()
+            ->format('0,0');
     }
 
     /**

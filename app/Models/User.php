@@ -46,6 +46,8 @@ class User extends Authenticatable
         return in_array($this->email, [
             'abdilatiifali@gmail.com',
             'mohamed.abdi@fimnet.co.ke',
+            'support@fimnet.co.ke',
+            'manager@fimnet.co.ke',
         ]);
-    }   
+    }
 }

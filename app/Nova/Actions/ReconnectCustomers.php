@@ -18,8 +18,6 @@ class ReconnectCustomers extends Action
     /**
      * Perform the action on the given models.
      *
-     * @param  \Laravel\Nova\Fields\ActionFields  $fields
-     * @param  \Illuminate\Support\Collection  $models
      * @return mixed
      */
     public function handle(ActionFields $fields, Collection $models)
@@ -27,8 +25,8 @@ class ReconnectCustomers extends Action
         foreach ($models as $customer) {
             $router = Router::findOrFail($customer->router_id);
             ApiRouter::make($router)
-                        ->openServer()
-                        ->reconnect($customer);
+                ->openServer()
+                ->reconnect($customer);
         }
     }
 

@@ -28,6 +28,7 @@ class CustomerPolicy
     {
         return $user->isAdmin();
     }
+
     public function attachAnyMonth(User $user)
     {
         return $user->isAdmin();
@@ -37,5 +38,4 @@ class CustomerPolicy
     {
         return $user->isAdmin();
     }
-
 }

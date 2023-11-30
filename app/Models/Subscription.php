@@ -8,7 +8,7 @@ use Laravel\Nova\Actions\Actionable;
 
 class Subscription extends Pivot
 {
-    use HasFactory, Actionable;
+    use Actionable, HasFactory;
 
     protected $table = 'subscriptions';
 

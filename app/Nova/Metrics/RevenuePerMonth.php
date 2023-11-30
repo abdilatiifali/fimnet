@@ -14,7 +14,6 @@ class RevenuePerMonth extends Trend
     /**
      * Calculate the value of the metric.
      *
-     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
      * @return mixed
      */
     public function calculate(NovaRequest $request)
@@ -31,27 +30,27 @@ class RevenuePerMonth extends Trend
             ->format('0,0');
     }
 
-   public function revenuePerMonth($house = null)
-   {
-       $months = Month::all();
-       $revenue = collect([]);
+    public function revenuePerMonth($house = null)
+    {
+        $months = Month::all();
+        $revenue = collect([]);
 
-       $months->each(function ($month) use ($revenue, $house) {
-           $subscriptions = Subscription::where('session_id', session('year'))
-               ->where('month_id', $month->id);
+        $months->each(function ($month) use ($revenue, $house) {
+            $subscriptions = Subscription::where('session_id', session('year'))
+                ->where('month_id', $month->id);
 
-           if ($house) {
-               $subscriptions->whereIn(
-                   'customer_id',
-                   Customer::where('house_id', $house)->pluck('id')
-               );
-           }
+            if ($house) {
+                $subscriptions->whereIn(
+                    'customer_id',
+                    Customer::where('house_id', $house)->pluck('id')
+                );
+            }
 
-           $revenue->put($month->month, $subscriptions->sum('amount_paid'));
-       });
+            $revenue->put($month->month, $subscriptions->sum('amount_paid'));
+        });
 
-       return $revenue->toArray();
-   }
+        return $revenue->toArray();
+    }
 
     /**
      * Determine for how many minutes the metric should be cached.

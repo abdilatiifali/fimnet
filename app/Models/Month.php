@@ -8,7 +8,7 @@ use Laravel\Nova\Actions\Actionable;
 
 class Month extends Model
 {
-    use HasFactory, Actionable;
+    use Actionable, HasFactory;
 
     protected $guarded = [];
 
@@ -20,9 +20,9 @@ class Month extends Model
     public function subscriptions()
     {
         return $this->belongsToMany(Customer::class, 'subscriptions')
-                ->where('session_id', session('year'))
-                ->withPivot(['id', 'paid', 'amount', 'payment_type', 'amount_paid', 'session_id', 'balance', 'updated_at'])
-                ->withTimestamps();
+            ->where('session_id', session('year'))
+            ->withPivot(['id', 'paid', 'amount', 'payment_type', 'amount_paid', 'session_id', 'balance', 'updated_at'])
+            ->withTimestamps();
     }
 
     public function expense()

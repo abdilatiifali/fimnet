@@ -13,13 +13,13 @@ class Transaction extends Model
 
     protected $hidden = ['created_at', 'updated_at'];
 
-    public static function record($pivot) 
+    public static function record($pivot)
     {
         $customer = Customer::findOrFail($pivot->customer_id);
 
         static::create([
             'name' => $customer->name,
-            'unit' => $customer->house?->name . ' ' . $customer?->appartment ?? 'null',
+            'unit' => $customer->house?->name.' '.$customer?->appartment ?? 'null',
             'amount' => $pivot->amount_paid,
             'payment_type' => $pivot->payment_type,
         ]);

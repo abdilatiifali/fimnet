@@ -12,7 +12,6 @@ class MonthlyRevenueStat extends Value
     /**
      * Calculate the value of the metric.
      *
-     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
      * @return mixed
      */
     public function calculate(NovaRequest $request)
@@ -20,9 +19,9 @@ class MonthlyRevenueStat extends Value
         [, , $id] = explode('/', $request->path());
 
         $amountPaid = Subscription::query()
-                ->where('month_id', Month::find($id)->id)
-                ->where('session_id', session('year'))
-                ->sum('amount_paid');
+            ->where('month_id', Month::find($id)->id)
+            ->where('session_id', session('year'))
+            ->sum('amount_paid');
 
         return $this->result($amountPaid)
             ->allowZeroResult()

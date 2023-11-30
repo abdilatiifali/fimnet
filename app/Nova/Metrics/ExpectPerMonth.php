@@ -14,7 +14,6 @@ class ExpectPerMonth extends Trend
     /**
      * Calculate the value of the metric.
      *
-     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
      * @return mixed
      */
     public function calculate(NovaRequest $request)
@@ -38,7 +37,7 @@ class ExpectPerMonth extends Trend
 
         $months->each(function ($month) use ($total, $house) {
             $subscriptions = Subscription::where('session_id', session('year'))
-                    ->where('month_id', $month->id);
+                ->where('month_id', $month->id);
 
             if ($house) {
                 $subscriptions->whereIn(

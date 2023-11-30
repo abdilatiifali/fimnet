@@ -12,7 +12,6 @@ class MonthlyExpectedStat extends Value
     /**
      * Calculate the value of the metric.
      *
-     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
      * @return mixed
      */
     public function calculate(NovaRequest $request)
@@ -20,9 +19,9 @@ class MonthlyExpectedStat extends Value
         [, , $id] = explode('/', $request->path());
 
         $amount = Subscription::query()
-                ->where('month_id', Month::find($id)->id)
-                ->where('session_id', session('year'))
-                ->sum('amount');
+            ->where('month_id', Month::find($id)->id)
+            ->where('session_id', session('year'))
+            ->sum('amount');
 
         return $this->result($amount)
             ->allowZeroResult()

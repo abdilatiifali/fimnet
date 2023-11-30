@@ -53,14 +53,13 @@ class ApiRouter
             'blocked_at' => now(),
         ]);
 
-        return;
     }
 
     public function blockIpAddress($customer)
     {
         $query = (new Query('/ip/firewall/address-list/add'))
-                    ->equal('list', config('app.name'))
-                    ->equal('address', $customer->ip_address);
+            ->equal('list', config('app.name'))
+            ->equal('address', $customer->ip_address);
 
         return $this->client->query($query)->read();
     }
@@ -72,9 +71,9 @@ class ApiRouter
         $mikrotikIds = [];
 
         foreach ($customers as $customer) {
-             if ($customer->balance <= 0) {
+            if ($customer->balance <= 0) {
                 continue;
-             }
+            }
             try {
                 $response = $this->blockIpAddress($customer);
                 $mikrotikIds[$customer->id] = $response['after']['ret'] ?? null;
@@ -108,7 +107,7 @@ class ApiRouter
             $updateSql .= "WHEN {$id} THEN '{$mikrotikId}' ";
         }
 
-        $updateSql .= "END, status = '" . CustomerStatus::blocked->value . "' WHERE id IN (" . implode(',', array_keys($mikrotikIds)) . ")";
+        $updateSql .= "END, status = '".CustomerStatus::blocked->value."' WHERE id IN (".implode(',', array_keys($mikrotikIds)).')';
 
         \DB::update($updateSql);
 
@@ -117,9 +116,9 @@ class ApiRouter
     protected function addFirewallFilterToDropBlockedCustomers()
     {
         $query = (new Query('/ip/firewall/filter/add'))
-                    ->equal('chain', 'forward')
-                    ->equal('src-address-list', config('app.name'))
-                    ->equal('action', 'drop');
+            ->equal('chain', 'forward')
+            ->equal('src-address-list', config('app.name'))
+            ->equal('action', 'drop');
 
         $this->client->query($query)->read();
     }
@@ -133,7 +132,7 @@ class ApiRouter
 
         $customer->mikrotik_id = null;
         $customer->status = CustomerStatus::active->value;
-        $customer->blocked_at = null; 
+        $customer->blocked_at = null;
         $customer->saveQuietly();
 
         return $response;
@@ -153,7 +152,7 @@ class ApiRouter
     {
         $customer = $customer->load('house');
 
-        $package = 
+        $package =
             (int) filter_var($customer?->package->speed, FILTER_SANITIZE_NUMBER_INT)
             ?? $this->getDefaultSpeed();
 
@@ -161,13 +160,14 @@ class ApiRouter
 
         if (! empty($item)) {
             $this->updateCustomer($customer, $item[0]);
+
             return;
         }
 
         $query = (new Query('/queue/simple/add'))
-                ->equal('name', $customer->mpesaId)
-                ->equal('target', $customer->ip_address)
-                ->equal('max-limit', "0/${package}M");
+            ->equal('name', $customer->mpesaId)
+            ->equal('target', $customer->ip_address)
+            ->equal('max-limit', "0/${package}M");
 
         return $this->client->query($query)->read();
     }
@@ -194,7 +194,7 @@ class ApiRouter
 
     public function updateCustomer($customer, $item)
     {
-        $package = 
+        $package =
             (int) filter_var($customer?->package->speed, FILTER_SANITIZE_NUMBER_INT)
             ?? $this->getDefaultSpeed();
 

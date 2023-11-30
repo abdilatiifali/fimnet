@@ -8,10 +8,10 @@ use App\Nova\Metrics\CustomersPerDay;
 use App\Nova\Metrics\ExpectPerMonth;
 use App\Nova\Metrics\NewCustomer;
 use App\Nova\Metrics\RevenuePerMonth;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Nova\Nova;
 use Laravel\Nova\NovaApplicationServiceProvider;
-use Illuminate\Support\Facades\Blade;
 
 class NovaServiceProvider extends NovaApplicationServiceProvider
 {
@@ -41,9 +41,9 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     protected function routes()
     {
         Nova::routes()
-                ->withAuthenticationRoutes()
-                ->withPasswordResetRoutes()
-                ->register();
+            ->withAuthenticationRoutes()
+            ->withPasswordResetRoutes()
+            ->register();
     }
 
     /**
@@ -59,6 +59,8 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
             return in_array($user->email, [
                 'abdilatiifali@gmail.com',
                 'mohamed.abdi@fimnet.co.ke',
+                'support@fimnet.co.ke',
+                'manager@fimnet.co.ke',
             ]);
         });
     }

@@ -3,8 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Database\Eloquent\Relations\Pivot;
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -26,9 +26,9 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         JsonResource::withoutWrapping();
-        
+
         $session = \DB::table('sessions')
-                    ->where('year', now()->year)->first();
+            ->where('year', now()->year)->first();
 
         if (! session()->has('year')) {
             session()->put('year', $session->id);

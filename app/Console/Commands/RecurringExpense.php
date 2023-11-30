@@ -23,18 +23,19 @@ class RecurringExpense extends Command
 
     public function recurring()
     {
-        $expenses =  [
-            'internet fee'              => 400000,
-            'Rent Office'               => 50000,
-            'Salaries'                  => 100000,
-            'House rent & Food'         => 150000,
-            'Som Bill'                  => 60000,
-            'Offers & Company Needs'    => 65000,
-            'Ayuto'                     => 200000 
+        $expenses = [
+            'internet fee' => 400000,
+            'Rent Office' => 50000,
+            'Salaries' => 100000,
+            'House rent & Food' => 150000,
+            'Som Bill' => 60000,
+            'Offers & Company Needs' => 65000,
+            'Ayuto' => 200000,
         ];
 
         return $expenses;
     }
+
     /**
      * Execute the console command.
      *
@@ -44,7 +45,7 @@ class RecurringExpense extends Command
     {
         $expenses = $this->recurring();
 
-        foreach($expenses as $title => $amount) {
+        foreach ($expenses as $title => $amount) {
             Expense::create([
                 'title' => $title,
                 'amount' => $amount,

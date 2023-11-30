@@ -35,17 +35,17 @@ class DisconnectByRouter extends Command
         $session = Session::where('year', now()->year)->firstOrFail();
 
         $customerIds = Subscription::whereIn('customer_id', $router->customers->pluck('id'))
-                    ->where('amount', '>', 0)
-                    ->where('paid', false)
-                    ->where('session_id', $session->id)
-                    ->where('month_id', now()->month)
-                    ->pluck('customer_id');
+            ->where('amount', '>', 0)
+            ->where('paid', false)
+            ->where('session_id', $session->id)
+            ->where('month_id', now()->month)
+            ->pluck('customer_id');
 
         $api = ApiRouter::make($router);
 
         try {
             $client = $api->openServer($router);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             \Log::info('something went wrong');
         }
 

@@ -11,7 +11,6 @@ class PaymentType extends Partition
     /**
      * Calculate the value of the metric.
      *
-     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
      * @return mixed
      */
     public function calculate(NovaRequest $request)
@@ -19,11 +18,11 @@ class PaymentType extends Partition
         [, , $monthId] = explode('/', $request->path());
 
         $subscription = Subscription::where('session_id', session('year'))
-                            ->where('month_id', $monthId);
+            ->where('month_id', $monthId);
 
         return $this->count($request, $subscription, 'payment_type')
             ->label(function ($value) {
-                switch($value) {
+                switch ($value) {
                     case 'cash':
                         return 'Cash';
                     case 'mpesa':

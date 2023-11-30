@@ -39,18 +39,18 @@ class DisconnectionCommand extends Command
 
             try {
                 $client = $api->openServer();
-            } catch(\Exception $e) {
+            } catch (\Exception $e) {
                 \Log::info('caught it ');
 
                 continue;
             }
 
             $customerIds = Subscription::whereIn('customer_id', $router->customers->pluck('id'))
-                    ->where('amount', '>', 0)
-                    ->where('paid', false)
-                    ->where('session_id', $session->id)
-                    ->where('month_id', now()->month)
-                    ->pluck('customer_id');
+                ->where('amount', '>', 0)
+                ->where('paid', false)
+                ->where('session_id', $session->id)
+                ->where('month_id', now()->month)
+                ->pluck('customer_id');
 
             $api->disconnect($client, $customerIds);
         }

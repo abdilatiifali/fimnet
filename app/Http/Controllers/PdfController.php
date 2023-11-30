@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Customer;
 use App\Models\Subscription;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Http\Request;
-use App\Enums\Month;
 
 class PdfController extends Controller
 {
@@ -16,12 +14,11 @@ class PdfController extends Controller
         $customer = Customer::findOrFail($customerId);
 
         $subscriptions = Subscription::where('customer_id', $customer->id)
-                            ->get();
+            ->get();
 
         $groupedSubscriptions = $subscriptions->groupBy('session_id');
 
         $pdf = Pdf::loadView('statement', compact('logo', 'customer', 'groupedSubscriptions'));
-
 
         return $pdf->stream('statement.pdf');
     }

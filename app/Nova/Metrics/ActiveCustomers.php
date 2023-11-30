@@ -11,22 +11,21 @@ class ActiveCustomers extends Partition
     /**
      * Calculate the value of the metric.
      *
-     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
      * @return mixed
      */
     public function calculate(NovaRequest $request)
     {
         return $this->count($request, Customer::class, 'status')
-                ->label(function ($value) {
-                    switch ($value) {
-                        case 'active':
-                            return 'Active Customer';
-                        case 'blocked':
-                            return 'Blocked Customer';
-                        case 'new':
-                            return 'New Customer';
-                    }
-                })->colors([
+            ->label(function ($value) {
+                switch ($value) {
+                    case 'active':
+                        return 'Active Customer';
+                    case 'blocked':
+                        return 'Blocked Customer';
+                    case 'new':
+                        return 'New Customer';
+                }
+            })->colors([
                     'New Customer' => '#f6993f',
                     'Active Customer' => '#22c55e',
                     'Blocked Customer' => '#ef4444',

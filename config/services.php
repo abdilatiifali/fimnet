@@ -49,7 +49,7 @@ return [
         'shortCode' => env('SMS_SHORTCODE'),
         'apiKey' => env('SMS_API_KEY'),
         'partnerId' => env('PARTNER_ID'),
-    ], 
+    ],
 
     'mikrotik' => [
         'user' => env('MIKROTIK_USER'),

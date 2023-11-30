@@ -33,8 +33,8 @@ class MonthlyCustomers extends Command
         $month = Month::where('month', $this->argument('month'))->firstOrFail();
 
         $customers = Customer::where('status', '!=', CustomerStatus::blocked->value)
-                        ->where('amount', '>', 0)
-                        ->lazy();
+            ->where('amount', '>', 0)
+            ->lazy();
 
         foreach ($customers as $customer) {
             if (! $customer->subscriptions->contains($month)) {

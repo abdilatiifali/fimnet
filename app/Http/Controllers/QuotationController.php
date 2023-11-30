@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Quotation;
-use Illuminate\Http\Request;
 use LaravelDaily\Invoices\Classes\InvoiceItem;
 use LaravelDaily\Invoices\Classes\Party;
 use LaravelDaily\Invoices\Invoice;

@@ -38,17 +38,17 @@ class DisconnectCustomersOverdue extends Command
         $session = Session::where('year', now()->year)->firstOrFail();
 
         $customerIds = Customer::whereIn('house_id', $housesId)
-                            ->where('status', CustomerStatus::active->value)
-                            ->where('due_date', null)
-                            ->pluck('id');
+            ->where('status', CustomerStatus::active->value)
+            ->where('due_date', null)
+            ->pluck('id');
 
         $batchSize = 50;
         $customerIds = Subscription::whereIn('customer_id', $customerIds)
-                    ->where('amount', '>', 0)
-                    ->where('paid', false)
-                    ->where('session_id', $session->id)
-                    ->where('month_id', now()->month)
-                    ->pluck('customer_id');
+            ->where('amount', '>', 0)
+            ->where('paid', false)
+            ->where('session_id', $session->id)
+            ->where('month_id', now()->month)
+            ->pluck('customer_id');
 
         Customer::whereIn('id', $customerIds)
             ->chunk($batchSize, function ($customers) use ($batchSize) {
@@ -59,7 +59,7 @@ class DisconnectCustomersOverdue extends Command
                     $this->info("IP addresses blocked for router ID {$routerId}");
                 }
             });
-            
+
         // SmsGateway::sendStaffMessage($housesId);
     }
 }

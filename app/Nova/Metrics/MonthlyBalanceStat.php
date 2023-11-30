@@ -12,7 +12,6 @@ class MonthlyBalanceStat extends Value
     /**
      * Calculate the value of the metric.
      *
-     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
      * @return mixed
      */
     public function calculate(NovaRequest $request)
@@ -20,9 +19,9 @@ class MonthlyBalanceStat extends Value
         [, , $id] = explode('/', $request->path());
 
         $balance = Subscription::query()
-                ->where('month_id', Month::find($id)->id)
-                ->where('session_id', session('year'))
-                ->sum('balance');
+            ->where('month_id', Month::find($id)->id)
+            ->where('session_id', session('year'))
+            ->sum('balance');
 
         return $this->result($balance)
             ->allowZeroResult()

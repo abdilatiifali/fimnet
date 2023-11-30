@@ -3,13 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Laravel\Nova\Actions\Actionable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Nova\Actions\Actionable;
 
 class Customer extends Authenticatable
 {
-    use HasFactory, Actionable;
+    use Actionable, HasFactory;
 
     protected $guarded = [];
 
@@ -18,7 +17,7 @@ class Customer extends Authenticatable
     protected $hidden = ['password'];
 
     protected $appends = ['balance'];
-    
+
     public function subscriptions()
     {
         return $this->belongsToMany(Month::class, 'subscriptions')
@@ -54,7 +53,7 @@ class Customer extends Authenticatable
             return mb_substr($segment, 0, 1);
         })->join(' '));
 
-        return 'https://ui-avatars.com/api/?name=' . urlencode($name) . '&color=7F9CF5&background=EBF4FF';
+        return 'https://ui-avatars.com/api/?name='.urlencode($name).'&color=7F9CF5&background=EBF4FF';
     }
 
     public function package()

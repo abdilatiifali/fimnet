@@ -14,12 +14,11 @@ function generateOrderedString($prefix = null, $padLength = 3, $start = 1)
     $prefix = $prefix ?? config('app.mpesa_prefix');
 
     $mpesaCode = \DB::table('customers')
-                ->select('mpesaId')
-                ->selectRaw('CAST(SUBSTRING(mpesaId, 3) AS UNSIGNED) AS numeric_id')
-                ->orderByRaw('numeric_id DESC')
-                ->latest()
-                ->first();
-
+        ->select('mpesaId')
+        ->selectRaw('CAST(SUBSTRING(mpesaId, 3) AS UNSIGNED) AS numeric_id')
+        ->orderByRaw('numeric_id DESC')
+        ->latest()
+        ->first();
 
     if (! $mpesaCode) {
         return generate_unique_string($prefix);

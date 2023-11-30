@@ -33,21 +33,21 @@ class DisconnectCustomerDueDate extends Command
     public function handle()
     {
         $customerIds = Customer::where('status', CustomerStatus::active->value)
-                            ->where('due_date', now()->toDateString())->pluck('id');
+            ->where('due_date', now()->toDateString())->pluck('id');
 
         $customerIds = Subscription::whereIn('customer_id', $customerIds)
-                    ->where('amount', '>', 0)
-                    ->where('paid', false)
-                    ->where('session_id', config('app.year'))
-                    ->where('month_id', now()->month)
-                    ->pluck('customer_id');
+            ->where('amount', '>', 0)
+            ->where('paid', false)
+            ->where('session_id', config('app.year'))
+            ->where('month_id', now()->month)
+            ->pluck('customer_id');
 
         Customer::whereIn('id', $customerIds)
             ->each(function ($customer) {
                 if ($customer->balance() > 0) {
                     ApiRouter::make(Router::findOrFail($customer->router_id))
-                            ->openServer()
-                            ->disconnectBy($customer);
+                        ->openServer()
+                        ->disconnectBy($customer);
                 }
             });
 

@@ -6,7 +6,6 @@ use App\Enums\CustomerStatus;
 use App\Enums\PaymentType;
 use App\Nova\Actions\DisconnectCustomer;
 use App\Nova\Actions\ReconnectCustomers;
-use App\Nova\Actions\SendCustomerInvoice;
 use App\Nova\Actions\SendCustomerStatement;
 use App\Nova\Actions\SendPaymentReminder;
 use App\Nova\Actions\SendSms;
@@ -19,20 +18,18 @@ use App\Nova\Metrics\BalancePerCustomer;
 use App\Nova\Metrics\NewCustomer;
 use App\Nova\Metrics\TotalCustomers;
 use Illuminate\Http\Request;
-use Inspheric\Fields\Indicator;
 use Laravel\Nova\Fields\Badge;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Currency;
+use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
-use Laravel\Nova\Fields\Select;
-use Laravel\Nova\Fields\Date;
-use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Password;
-use Maatwebsite\LaravelNovaExcel\Actions\DownloadExcel;
+use Laravel\Nova\Fields\Select;
+use Laravel\Nova\Fields\Text;
 
 class Customer extends Resource
 {
@@ -73,7 +70,6 @@ class Customer extends Resource
     /**
      * Get the fields displayed by the resource.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return array
      */
     public function fields(Request $request)
@@ -96,7 +92,7 @@ class Customer extends Resource
                 ->rules('required')
                 ->creationRules('unique:customers,username')
                 ->updateRules('unique:customers,username,{{resourceId}}'),
-            
+
             Password::make('Password')
                 ->onlyOnForms()
                 ->creationRules('required', 'string', 'min:8')
@@ -138,7 +134,7 @@ class Customer extends Resource
                             ->readonly(function ($request) {
                                 return ! $request->user()->isAdmin();
                             }
-                        ),
+                            ),
 
                         Currency::make('Amount')->readonly(function ($request) {
                             return ! $request->user()->isAdmin();
@@ -158,7 +154,6 @@ class Customer extends Resource
     /**
      * Get the cards available for the request.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return array
      */
     public function cards(Request $request)
@@ -166,8 +161,8 @@ class Customer extends Resource
         return [
             new TotalCustomers,
             (new BalancePerCustomer)
-            ->width('full')
-            ->onlyOnDetail(),
+                ->width('full')
+                ->onlyOnDetail(),
             new ActiveCustomers,
             new NewCustomer,
         ];
@@ -176,7 +171,6 @@ class Customer extends Resource
     /**
      * Get the filters available for the resource.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return array
      */
     public function filters(Request $request)
@@ -192,7 +186,6 @@ class Customer extends Resource
     /**
      * Get the lenses available for the resource.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return array
      */
     public function lenses(Request $request)
@@ -203,7 +196,6 @@ class Customer extends Resource
     /**
      * Get the actions available for the resource.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return array
      */
     public function actions(Request $request)

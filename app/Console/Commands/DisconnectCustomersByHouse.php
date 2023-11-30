@@ -38,17 +38,17 @@ class DisconnectCustomersByHouse extends Command
         $router = Router::findOrFail($house->router_id);
 
         $customerIds = Subscription::whereIn('customer_id', $house->customers->pluck('id'))
-                    ->where('amount', '>', 0)
-                    ->where('paid', false)
-                    ->where('session_id', $session->id)
-                    ->where('month_id', now()->month)
-                    ->pluck('customer_id');
+            ->where('amount', '>', 0)
+            ->where('paid', false)
+            ->where('session_id', $session->id)
+            ->where('month_id', now()->month)
+            ->pluck('customer_id');
 
         $api = ApiRouter::make($router);
 
         try {
             $client = $api->openServer($router);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             \Log::info('something went wrong');
         }
 

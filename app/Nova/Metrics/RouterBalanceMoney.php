@@ -14,7 +14,6 @@ class RouterBalanceMoney extends Trend
     /**
      * Calculate the value of the metric.
      *
-     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
      * @return mixed
      */
     public function calculate(NovaRequest $request)
@@ -35,9 +34,9 @@ class RouterBalanceMoney extends Trend
 
         Month::all()->each(function ($month) use ($total, $customers) {
             $amount = Subscription::where('session_id', session('year'))
-                        ->where('month_id', $month->id)
-                        ->whereIn('customer_id', $customers)
-                        ->sum('balance');
+                ->where('month_id', $month->id)
+                ->whereIn('customer_id', $customers)
+                ->sum('balance');
 
             $total->put($month->month, $amount);
         });

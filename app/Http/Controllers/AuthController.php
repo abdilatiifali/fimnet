@@ -14,15 +14,17 @@ class AuthController extends Controller
             'password' => ['required'],
         ]);
     }
+
     public function store(Request $request)
     {
         if (Auth::guard('api')->attempt($this->validateInput($request))) {
             $request->session()->regenerate();
+
             return response()->json([], 204);
         }
 
         return response()->json([
-            'error' => 'Invalid credentials'
+            'error' => 'Invalid credentials',
         ], 401);
     }
 
@@ -35,7 +37,7 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
 
         return response()->json([
-            'message' => 'successfully logout'
+            'message' => 'successfully logout',
         ]);
     }
 }

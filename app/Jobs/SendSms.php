@@ -4,7 +4,6 @@ namespace App\Jobs;
 
 use App\Models\SmsGateway;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -32,7 +31,7 @@ class SendSms implements ShouldQueue
     {
         $batch = collect($this->customers)->slice($this->offset, $this->batchSize);
 
-        foreach($batch as $customer) {
+        foreach ($batch as $customer) {
             SmsGateway::sendSms($customer);
         }
     }

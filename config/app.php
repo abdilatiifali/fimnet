@@ -27,7 +27,7 @@ return [
         'email' => env('company_email', 'abdilatiifali@gmail.com'),
         'phone' => env('company_phone', '0745793438'),
         'address' => env('company_address', 'MOONZ PLAZA'),
-    ],  
+    ],
 
     /*
     |--------------------------------------------------------------------------

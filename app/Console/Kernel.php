@@ -10,13 +10,12 @@ class Kernel extends ConsoleKernel
     /**
      * Define the application's command schedule.
      *
-     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
      * @return void
      */
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('disconnect:customers')
-               ->dailyAt('9:30');
+            ->dailyAt('9:30');
 
         $schedule->command('send:payment-reminder')
             ->dailyAt('16:00');

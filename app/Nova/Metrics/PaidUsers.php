@@ -11,7 +11,6 @@ class PaidUsers extends Partition
     /**
      * Calculate the value of the metric.
      *
-     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
      * @return mixed
      */
     public function calculate(NovaRequest $request)
@@ -19,20 +18,20 @@ class PaidUsers extends Partition
         [, , $monthId] = explode('/', $request->path());
 
         return $this->count($request, Subscription::where('month_id', $monthId)
-                    ->where('amount', '>', 0)
-                    ->where('session_id', session('year')), 'paid', 'month_id')
-                ->label(function ($value) {
-                    switch($value) {
-                        case 0:
-                            return 'Not Paid';
-                        default:
-                            return 'Paid Users';
-                    }
-                })
-                ->colors([
-                    'Paid Users' => '#22c55e',
-                    'Not Paid' => '#ef4444',
-                ]);
+            ->where('amount', '>', 0)
+            ->where('session_id', session('year')), 'paid', 'month_id')
+            ->label(function ($value) {
+                switch ($value) {
+                    case 0:
+                        return 'Not Paid';
+                    default:
+                        return 'Paid Users';
+                }
+            })
+            ->colors([
+                'Paid Users' => '#22c55e',
+                'Not Paid' => '#ef4444',
+            ]);
     }
 
     /**

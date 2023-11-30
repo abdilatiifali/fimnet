@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Router;
 use App\Models\SmsGateway;
 use Illuminate\Console\Command;
 
@@ -36,21 +35,21 @@ class PingCommand extends Command
 
         $hosts = [
             'Town' => '102.214.84.84',
-            'Big Router' => '102.214.84.2', 
-            'Small Router' => '102.214.84.3', 
-            'Testing Router' => '102.214.84.4', 
-            'Al Mukarama Router' => '102.214.84.5', 
-            'Daus Router' => '102.214.84.99', 
+            'Big Router' => '102.214.84.2',
+            'Small Router' => '102.214.84.3',
+            'Testing Router' => '102.214.84.4',
+            'Al Mukarama Router' => '102.214.84.5',
+            'Daus Router' => '102.214.84.99',
             'Kalimani Router' => '102.214.84.66',
             'Adizon Router' => '102.214.84.34',
             'City Park' => '102.214.84.83',
         ];
 
-        foreach($hosts as $key => $host) {
+        foreach ($hosts as $key => $host) {
             $command = "echo $password | sudo -S /sbin/ping -c 5 -W 5 {$host}";
             exec($command, $output, $result);
 
-             if ($result == 0) {
+            if ($result == 0) {
                 if (\Cache::has("{$key}_down")) {
                     SmsGateway::routerIsUp($key);
                     \Cache::forget("{$host}_down");

@@ -11,7 +11,6 @@ class TotalCustomers extends Value
     /**
      * Calculate the value of the metric.
      *
-     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
      * @return mixed
      */
     public function calculate(NovaRequest $request)
@@ -19,8 +18,8 @@ class TotalCustomers extends Value
         return $this->result(
             Customer::count()
         )
-        ->format('0,0')
-        ->allowZeroResult();
+            ->format('0,0')
+            ->allowZeroResult();
     }
 
     /**

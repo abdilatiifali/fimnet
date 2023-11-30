@@ -19,23 +19,23 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/customers/{houseId}', function (Request $request, $houseId) {
     $customers = Customer::select('name', 'phone_number', 'appartment', 'ip_address', 'mpesaId')
-                    ->where('house_id', $houseId)
-                    ->get();
+        ->where('house_id', $houseId)
+        ->get();
 
     return $customers;
 });
 
-Route::get("/client", function () {
+Route::get('/client', function () {
     return CustomerResource::make(
         \Auth::guard('api')->user()->load('subscriptions')
     );
 })->middleware(['auth:sanctum']);
 
-Route::get("/user", function () {
+Route::get('/user', function () {
     return response()->json([
         'name' => \Auth::guard('api')->user()->name,
-        'photo' =>  \Auth::guard('api')->user()->defaultProfilePhotoUrl(),
+        'photo' => \Auth::guard('api')->user()->defaultProfilePhotoUrl(),
     ]);
 })->middleware(['auth:sanctum']);
 
-Route::post("/sdkpush", [PaymentsController::class, 'stkdpush'])->middleware(['auth:sanctum']);
+Route::post('/sdkpush', [PaymentsController::class, 'stkdpush'])->middleware(['auth:sanctum']);
