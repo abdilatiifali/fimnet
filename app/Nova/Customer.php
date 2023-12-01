@@ -9,9 +9,11 @@ use App\Nova\Actions\ReconnectCustomers;
 use App\Nova\Actions\SendCustomerStatement;
 use App\Nova\Actions\SendPaymentReminder;
 use App\Nova\Actions\SendSms;
+use App\Nova\Filters\DistrictFilter;
 use App\Nova\Filters\HouseFilter;
 use App\Nova\Filters\PaidType;
 use App\Nova\Filters\PaymentTypeFilter;
+use App\Nova\Filters\RouterFilter;
 use App\Nova\Filters\StatusType;
 use App\Nova\Metrics\ActiveCustomers;
 use App\Nova\Metrics\BalancePerCustomer;
@@ -75,7 +77,7 @@ class Customer extends Resource
     public function fields(Request $request)
     {
         return [
-            ID::make(__('ID'), 'id')->sortable(),
+            ID::make(__('ID'), 'id')->sortable()->hideFromIndex(),
 
             Badge::make('Status')->map([
                 CustomerStatus::active->value => 'success',
@@ -85,8 +87,9 @@ class Customer extends Resource
 
             Text::make('Name'),
 
-            Text::make('Account Number', 'mpesaId')
-                ->rules('required'),
+            Text::make('Account ', 'mpesaId')
+                ->rules('required')
+                ->hideFromIndex(),
 
             Text::make('Username')
                 ->rules('required')
@@ -99,14 +102,12 @@ class Customer extends Resource
                 ->updateRules('nullable', 'string', 'min:8'),
 
             Text::make('Ip Address', 'ip_address'),
-            Text::make('Units', 'appartment'),
             Number::make('Phone Number', 'phone_number'),
             BelongsTo::make('House'),
             BelongsTo::make('Router')->nullable(),
             Currency::make('Amount')->exceptOnForms(),
-            BelongsTo::make('Package'),
-            Text::make('Mpesa Id', 'mpesaId')->exceptOnForms()->nullable(),
-            DateTime::make('Blocked At', 'blocked_at')->nullable()->hideFromIndex()->exceptOnForms(),
+            BelongsTo::make('Package')->hideFromIndex(),
+            DateTime::make('Blocked At', 'blocked_at')->onlyOnDetail(),
             Date::make('Due Date', 'due_date')->nullable(),
 
             BelongsToMany::make('Month', 'subscriptions')
@@ -179,6 +180,7 @@ class Customer extends Resource
             new PaidType,
             new PaymentTypeFilter,
             new HouseFilter,
+            new RouterFilter,
             new StatusType,
         ];
     }
