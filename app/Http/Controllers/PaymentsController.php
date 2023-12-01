@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Enums\PaymentType;
 use App\Models\Customer;
+use App\Models\Income;
+use App\Models\Month;
 use App\Models\Subscription;
 use App\Providers\CustomerSubscriptionUpdated;
 use Http;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class PaymentsController extends Controller
 {
@@ -36,8 +39,7 @@ class PaymentsController extends Controller
 
     public function validation()
     {
-        $accountNumber = preg_replace('/\s+/', '', request('BillRefNumber'));
-        $customer = Customer::where('mpesaId', $accountNumber)->first();
+        $customer = Customer::where('mpesaId', request('BillRefNumber'))->first();
 
         if (! $customer) {
             return response()->json([
@@ -66,22 +68,43 @@ class PaymentsController extends Controller
         ]);
     }
 
+    public function excessAmount($customer, $amount)
+    {
+        return $amount > $customer->amount ? $amount - $customer->amount : 0;
+    }
+
     public function confirmation()
     {
-        $accountNumber = preg_replace('/\s+/', '', request('BillRefNumber'));
+        \DB::transaction(function () { 
+            $customer = Customer::where('mpesaId', request('BillRefNumber'))->firstOrFail();
 
-        $customer = Customer::where('mpesaId', $accountNumber)->firstOrFail();
+            $pivot = Subscription::where('customer_id', $customer->id)
+                ->where('month_id', now()->month)
+                ->where('session_id', config('app.year'))
+                ->first();
 
-        $pivot = Subscription::where('customer_id', $customer->id)
-            ->where('month_id', now()->month)
-            ->where('session_id', config('app.year'))
-            ->first();
+            Income::create([
+                'code' => request('TransID'),
+                'transaction_time' => Carbon::parse(request('TransTime'))->format('d-m-Y H:ia'),
+                'paid_by' => request('FirstName'),
+                'customer_id' => $customer->id,
+                'month_id' => Month::where('id', now()->month)->first()->id,
+                'amount_paid' => request('TransAmount'),
+                'excess_amount' => $this->excessAmount($customer, request('TransAmount')),
+                'balance' => $customer->amount - request('TransAmount'),
+                'phone_number' => request('MSISDN'),
+                'account_number' => request('BillRefNumber'),
+                'router_id' => $customer->router->id,
+                'house_id' => $customer->house->id,
+            ]);
 
-        $pivot
-            ? $this->updateSubscription($customer, $pivot, request('TransAmount'))
-            : $pivot = $this->createSubscription($customer, request('TransAmount'));
+            $pivot
+                ? $this->updateSubscription($customer, $pivot, request('TransAmount'))
+                : $pivot = $this->createSubscription($customer, request('TransAmount'));
 
-        event(new CustomerSubscriptionUpdated($pivot));
+            event(new CustomerSubscriptionUpdated($pivot));
+        });
+       
 
         return 'done';
     }

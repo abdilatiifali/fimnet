@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Income;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Nova\Actions\Actionable;
@@ -45,6 +46,11 @@ class Customer extends Authenticatable
     {
         return Subscription::where('customer_id', $this->id)
             ->sum('balance');
+    }
+
+    public function incomes()
+    {
+        return $this->hasMany(Income::class);
     }
 
     public function defaultProfilePhotoUrl()

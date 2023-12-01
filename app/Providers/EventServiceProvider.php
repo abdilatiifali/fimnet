@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Enums\CustomerStatus;
 use App\Models\Customer;
 use App\Models\Quotation;
+use App\Models\Subscription;
 use App\Network\ApiRouter;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -41,6 +42,7 @@ class EventServiceProvider extends ServiceProvider
         parent::boot();
 
         Quotation::creating(function ($pivot) {
+            $customer = Customer::findOrFail($pivot->customer_id);
             $subscription = Subscription::where('customer_id', $pivot->customer_id)
                 ->where('month_id', now()->month)
                 ->where('session_id', config('app.year'))
@@ -51,7 +53,10 @@ class EventServiceProvider extends ServiceProvider
                 $totalAmount += $item['amount'] * $item['quantity'];
             }
 
-            $subscription->update(['amount' => $totalAmount]);
+            $subscription->amount = $totalAmount + $subscription->amount;
+            $subscription->balance = $totalAmount;
+
+            $subscription->saveQuietly();
         });
 
         Quotation::updating(function ($pivot) {
@@ -65,11 +70,13 @@ class EventServiceProvider extends ServiceProvider
                 $totalAmount += $item['amount'] * $item['quantity'];
             }
 
-            $subscription->update(['amount' => $totalAmount]);
+            $subscription->amount = $totalAmount;
+            $subscription->balance = $totalAmount;
+            $subscription->saveQuietly();
         });
 
         Pivot::creating(function ($pivot) {
-            if ($pivot->amount_paid >= $pivot->amount && now()->month == $pivot->month_id) {
+            if (now()->month == $pivot->month_id) {
                 $customer = Customer::findOrFail($pivot->customer_id);
                 $customer->status = CustomerStatus::active->value;
                 $customer->saveQuietly();

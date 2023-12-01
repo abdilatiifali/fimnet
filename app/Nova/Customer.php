@@ -22,6 +22,7 @@ use App\Nova\Metrics\TotalCustomers;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Badge;
 use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Currency;
@@ -51,7 +52,7 @@ class Customer extends Resource
      *
      * @var string
      */
-    public static $title = 'name';
+    public static $title = 'username';
 
     /**
      * The columns that should be searched.
@@ -66,6 +67,7 @@ class Customer extends Resource
         'amount',
         'phone_number',
         'mpesaId',
+        'username',
     ];
 
     /**
@@ -122,7 +124,8 @@ class Customer extends Resource
                             'cash' => 'success',
                             'mpesa' => 'info',
                             '_' => 'danger',
-                        ]),
+                        ])->required(),
+                        
                         Select::make('Payment Type', 'payment_type')
                             ->options([
                                 PaymentType::cash->value => 'Cash',
@@ -146,6 +149,8 @@ class Customer extends Resource
                         DateTime::make('Updated At', 'updated_at')->onlyOnDetail(),
                     ];
                 }),
+
+            HasMany::make('Incomes'),
 
             Text::make('Comment')->hideFromIndex(),
         ];

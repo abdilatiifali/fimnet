@@ -34,7 +34,7 @@ class UpdateSubscription
             ->openServer()
             ->reconnect($customer);
 
-        if (optional($customer->house)->block_day !== now()->day) {
+        if ($customer->due_date && optional($customer->house)->block_day !== now()->day) {
             $customer->due_date = now()->addMonth()->format('d-M-Y');
             $customer->saveQuietly();
         }

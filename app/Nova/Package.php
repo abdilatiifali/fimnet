@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Currency;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 class Package extends Resource
@@ -46,6 +47,8 @@ class Package extends Resource
             Text::make('Name'),
             Text::make('Speed'),
             Currency::make('Price')->Currency('KES'),
+
+            HasMany::make('Customers'),
         ];
     }
 
