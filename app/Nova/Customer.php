@@ -61,7 +61,6 @@ class Customer extends Resource
     public static $search = [
         'id',
         'name',
-        'appartment',
         'ip_address',
         'comment',
         'amount',
