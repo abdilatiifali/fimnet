@@ -75,36 +75,35 @@ class PaymentsController extends Controller
 
     public function confirmation()
     {
-        \DB::transaction(function () { 
-            $customer = Customer::where('mpesaId', request('BillRefNumber'))->firstOrFail();
+        \Log::info('We are hitting');
 
-            $pivot = Subscription::where('customer_id', $customer->id)
-                ->where('month_id', now()->month)
-                ->where('session_id', config('app.year'))
-                ->first();
+        $customer = Customer::where('mpesaId', request('BillRefNumber'))->first();
 
-            Income::create([
-                'code' => request('TransID'),
-                'transaction_time' => Carbon::parse(request('TransTime'))->format('d-m-Y H:ia'),
-                'paid_by' => request('FirstName'),
-                'customer_id' => $customer->id,
-                'month_id' => Month::where('id', now()->month)->first()->id,
-                'amount_paid' => request('TransAmount'),
-                'excess_amount' => $this->excessAmount($customer, request('TransAmount')),
-                'balance' => $customer->amount - request('TransAmount'),
-                'phone_number' => request('MSISDN'),
-                'account_number' => request('BillRefNumber'),
-                'router_id' => $customer->router->id,
-                'house_id' => $customer->house->id,
-            ]);
+        $pivot = Subscription::where('customer_id', $customer->id)
+            ->where('month_id', now()->month)
+            ->where('session_id', config('app.year'))
+            ->first();
 
-            $pivot
-                ? $this->updateSubscription($customer, $pivot, request('TransAmount'))
-                : $pivot = $this->createSubscription($customer, request('TransAmount'));
+        $pivot
+            ? $this->updateSubscription($customer, $pivot, request('TransAmount'))
+            : $pivot = $this->createSubscription($customer, request('TransAmount'));
 
-            event(new CustomerSubscriptionUpdated($pivot));
-        });
-       
+        Income::create([
+            'code' => request('TransID'),
+            'transaction_time' => Carbon::parse(request('TransTime'))->format('d-m-Y H:ia'),
+            'paid_by' => request('FirstName'),
+            'customer_id' => $customer->id,
+            'month_id' => Month::where('id', now()->month)->first()->id,
+            'amount_paid' => request('TransAmount'),
+            'excess_amount' => $this->excessAmount($customer, request('TransAmount')),
+            'balance' => $customer->amount - request('TransAmount'),
+            'phone_number' => request('MSISDN'),
+            'account_number' => request('BillRefNumber'),
+            'router_id' => $customer->router->id,
+            'house_id' => $customer->house->id,
+        ]);
+
+         event(new CustomerSubscriptionUpdated($pivot));       
 
         return 'done';
     }
