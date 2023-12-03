@@ -39,7 +39,9 @@ class PaymentsController extends Controller
 
     public function validation()
     {
-        $customer = Customer::where('mpesaId', request('BillRefNumber'))->first();
+        $accountNumber = preg_replace('/\s+/', '', request('BillRefNumber'));
+
+        $customer = Customer::where('mpesaId', $accountNumber)->first();
 
         if (! $customer) {
             return response()->json([
@@ -73,11 +75,21 @@ class PaymentsController extends Controller
         return $amount > $customer->amount ? $amount - $customer->amount : 0;
     }
 
+    public function formatDate($transTime)
+    {
+        $parsedDateTime = Carbon::createFromFormat('YmdHis', $transTime);
+
+        $formattedDateTime = $parsedDateTime->format('d-M-Y H:i:s');
+
+        return $formattedDateTime;
+    }
+
     public function confirmation()
     {
-        \Log::info('We are hitting');
+        $accountNumber = preg_replace('/\s+/', '', request('BillRefNumber'));
+        $customer = Customer::where('mpesaId', $accountNumber)->first();
 
-        $customer = Customer::where('mpesaId', request('BillRefNumber'))->first();
+        $formattedDate = $this->formatDate(request('TransTime'));
 
         $pivot = Subscription::where('customer_id', $customer->id)
             ->where('month_id', now()->month)
@@ -90,7 +102,7 @@ class PaymentsController extends Controller
 
         Income::create([
             'code' => request('TransID'),
-            'transaction_time' => Carbon::parse(request('TransTime'))->format('d-m-Y H:ia'),
+            'transaction_time' => $formattedDate,
             'paid_by' => request('FirstName'),
             'customer_id' => $customer->id,
             'month_id' => Month::where('id', now()->month)->first()->id,
@@ -99,7 +111,7 @@ class PaymentsController extends Controller
             'balance' => $customer->amount - request('TransAmount'),
             'phone_number' => request('MSISDN'),
             'account_number' => request('BillRefNumber'),
-            'router_id' => $customer->router->id,
+            'router_id' => $customer->router->id ?? null,
             'house_id' => $customer->house->id,
         ]);
 

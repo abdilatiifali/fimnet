@@ -22,9 +22,6 @@ class Kernel extends ConsoleKernel
 
         $schedule->command('disconnect:today')
             ->dailyAt('1:38');
-
-        $schedule->command('recurring:expense')
-            ->monthly();
     }
 
     /**
