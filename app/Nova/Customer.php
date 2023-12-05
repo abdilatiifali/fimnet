@@ -102,7 +102,8 @@ class Customer extends Resource
                 ->creationRules('required', 'string', 'min:8')
                 ->updateRules('nullable', 'string', 'min:8'),
 
-            Text::make('Ip Address', 'ip_address'),
+            Text::make('Ip Address', 'ip_address')->sortable(),
+            
             Number::make('Phone Number', 'phone_number'),
             BelongsTo::make('House'),
             BelongsTo::make('Router')->nullable(),
