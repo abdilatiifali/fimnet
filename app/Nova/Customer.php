@@ -11,6 +11,7 @@ use App\Nova\Actions\SendPaymentReminder;
 use App\Nova\Actions\SendSms;
 use App\Nova\Filters\DistrictFilter;
 use App\Nova\Filters\HouseFilter;
+use App\Nova\Filters\PackageFilter;
 use App\Nova\Filters\PaidType;
 use App\Nova\Filters\PaymentTypeFilter;
 use App\Nova\Filters\RouterFilter;
@@ -22,12 +23,12 @@ use App\Nova\Metrics\TotalCustomers;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Badge;
 use Laravel\Nova\Fields\BelongsTo;
-use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Currency;
 use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\DateTime;
+use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Password;
@@ -105,8 +106,8 @@ class Customer extends Resource
             Number::make('Phone Number', 'phone_number'),
             BelongsTo::make('House'),
             BelongsTo::make('Router')->nullable(),
-            Currency::make('Amount')->exceptOnForms(),
-            BelongsTo::make('Package')->hideFromIndex(),
+            Currency::make('Amount')->exceptOnForms()->hideFromIndex(),
+            BelongsTo::make('Package'),
             DateTime::make('Blocked At', 'blocked_at')->onlyOnDetail(),
             Date::make('Due Date', 'due_date')->nullable(),
 
@@ -183,6 +184,7 @@ class Customer extends Resource
             new PaidType,
             new PaymentTypeFilter,
             new HouseFilter,
+            new PackageFilter,
             new RouterFilter,
             new StatusType,
         ];

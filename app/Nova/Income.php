@@ -51,12 +51,12 @@ class Income extends Resource
     {
         return [
             ID::make()->sortable(),
-            Text::make('Username', 'account_number'),
+            Text::make('Username', 'account_number')->sortable(),
             Text::make('Transaction Code', 'code'),
-            Text::make('Amount Paid', 'amount_paid'),
+            Text::make('Amount Paid', 'amount_paid')->sortable(),
             Text::make('Balance'),
             Text::make('Excess Amount', 'excess_amount'),
-            DateTime::make('Transaction Time', 'transaction_time'),
+            DateTime::make('Transaction Time', 'transaction_time')->sortable(),
             Text::make('Paid By', 'paid_by'),
             Text::make('Phone Number', 'phone_number'),
             BelongsTo::make('Customer')->onlyOnDetail(),
