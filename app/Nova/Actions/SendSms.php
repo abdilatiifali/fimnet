@@ -2,6 +2,7 @@
 
 namespace App\Nova\Actions;
 
+use App\Jobs\SendInternetISDown;
 use App\Models\SmsGateway;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -21,11 +22,7 @@ class SendSms extends Action
      */
     public function handle(ActionFields $fields, Collection $models)
     {
-        foreach ($models as $model) {
-            if ($model->phone_number !== '0') {
-                SmsGateway::sendInternetIsDownMessage($model);
-            }
-        }
+        SendInternetISDown::dispatch($models);
     }
 
     /**
