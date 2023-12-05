@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Jobs\ReconnectCustomer;
 use App\Models\Customer;
 use App\Network\ApiRouter;
 
@@ -26,13 +27,9 @@ class UpdateSubscription
     {
         $customer = Customer::findOrFail($event->pivot->customer_id);
 
-        if (! $customer->mikrotik_id || ! $event->pivot->amount_paid > 0) {
-            return;
-        }
+        if (! $event->pivot->amount_paid > 0) return;
 
-        ApiRouter::make($customer->router)
-            ->openServer()
-            ->reconnect($customer);
+        ReconnectCustomer::dispatch($customer);
 
         if ($customer->due_date && optional($customer->house)->block_day !== now()->day) {
             $customer->due_date = now()->addMonth()->format('d-M-Y');

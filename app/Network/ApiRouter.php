@@ -35,6 +35,7 @@ class ApiRouter
                 'pass' => config('services.mikrotik.password'),
                 'port' => 8728,
             ]);
+
         } catch (BadCredentialsException $exception) {
             \Log::info('something went wrong');
             throw new \Exception('something went wrong');
@@ -124,8 +125,28 @@ class ApiRouter
         $this->client->query($query)->read();
     }
 
+    public function checkFromTheNat($customer)
+    {
+        $query = ((new Query('/ip/firewall/nat/print')))
+                ->where('src-address', $customer->ip_address);
+
+       $response = $this->client->query($query)->read();
+
+       if (empty($response)) return;
+
+       if ($response[0]['disabled'] == "false") return;
+
+       $enableQuery = (new Query('/ip/firewall/nat/enable'))
+                    ->equal('.id', $response[0]['.id']);
+
+        $this->client->query($enableQuery)->read();
+
+        return $this;
+    }
+
     public function reconnect($customer)
     {
+        if (! $customer->mikrotik_id) return $this;
         $query = (new Query('/ip/firewall/address-list/remove'));
         $query->equal('.id', $customer->mikrotik_id);
 
@@ -136,7 +157,7 @@ class ApiRouter
         $customer->blocked_at = null;
         $customer->saveQuietly();
 
-        return $response;
+        return $this;
     }
 
     public function queueCustomer($customer)

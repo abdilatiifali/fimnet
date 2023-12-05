@@ -2,6 +2,7 @@
 
 namespace App\Nova\Actions;
 
+use App\Jobs\ReconnectCustomer;
 use App\Models\Router;
 use App\Network\ApiRouter;
 use Illuminate\Bus\Queueable;
@@ -23,10 +24,7 @@ class ReconnectCustomers extends Action
     public function handle(ActionFields $fields, Collection $models)
     {
         foreach ($models as $customer) {
-            $router = Router::findOrFail($customer->router_id);
-            ApiRouter::make($router)
-                ->openServer()
-                ->reconnect($customer);
+            ReconnectCustomer::dispatch($customer);
         }
     }
 
