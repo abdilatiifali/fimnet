@@ -34,9 +34,9 @@ class StatusType extends Filter
     public function options(Request $request)
     {
         return [
-            'New' => 3,
-            'Active' => 1,
-            'Blocked' => 2,
+            'New' => 'new',
+            'Active' => 'active',
+            'Blocked' => 'blocked',
         ];
     }
 }

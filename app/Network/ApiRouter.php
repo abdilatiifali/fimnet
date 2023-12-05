@@ -95,7 +95,8 @@ class ApiRouter
 
         $this->updateMikrotikIds($mikrotikIds);
         $mikrotikIds = [];
-        $this->addFirewallFilterToDropBlockedCustomers();
+
+        // $this->addFirewallFilterToDropBlockedCustomers();
 
         return 'done';
     }
