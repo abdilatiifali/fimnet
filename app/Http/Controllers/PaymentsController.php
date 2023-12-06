@@ -57,7 +57,7 @@ class PaymentsController extends Controller
             ]);
         }
 
-        if (request('TransAmount') != $customer->amount) {
+        if (request('TransAmount') < $customer->amount) {
             return response()->json([
                 'ResultCode' => 'C2B00013',
                 'ResultDesc' => 'Rejected',
