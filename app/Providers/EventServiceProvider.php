@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Enums\CustomerStatus;
+use App\Listeners\CheckIfTheIpIsNated;
 use App\Models\Customer;
 use App\Models\Quotation;
 use App\Models\Subscription;
@@ -29,6 +30,7 @@ class EventServiceProvider extends ServiceProvider
         ],
         CustomerCreated::class => [
             QueueCustomer::class,
+            CheckIfTheIpIsNated::class,
         ],
     ];
 

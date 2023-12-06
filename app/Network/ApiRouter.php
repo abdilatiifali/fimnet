@@ -65,6 +65,8 @@ class ApiRouter
         return $this->client->query($query)->read();
     }
 
+
+
     public function disconnect($customers)
     {
         $customers = $customers->lazy();
@@ -125,12 +127,44 @@ class ApiRouter
         $this->client->query($query)->read();
     }
 
+    public function disconnectFromTheNat($customer)
+    {
+        $response = $this->client->query('/ip/firewall/nat/print', [
+            'src-address', $customer->ip_address
+        ])->read();
+
+        $disabledQuery = (new Query('/ip/firewall/nat/set'))
+                    ->equal('.id', $response[0]['.id'])
+                    ->equal('disabled', 'yes');
+
+        $newResponse = $this->client->query($disabledQuery)->read();
+
+        dd($newResponse);
+    }
+
+    public function checkIfTheIpIsNated($customer)
+    {
+        $response = $this->client->query('/ip/firewall/nat/print', [
+            'src-address', $customer->ip_address
+        ])->read();
+
+        if (! empty($response)) return;
+
+        $query = (new Query('/ip/firewall/nat/add'))
+                ->equal('chain', 'srcnat')
+                ->equal('src-address', $customer->ip_address)
+                ->equal('action', 'masquerade');
+
+        $newResponse = $this->client->query($query)->read();
+
+        return;
+    }
+
     public function checkFromTheNat($customer)
     {
-        $query = ((new Query('/ip/firewall/nat/print')))
-                ->where('src-address', $customer->ip_address);
-
-       $response = $this->client->query($query)->read();
+        $response = $this->client->query('/ip/firewall/nat/print', [
+            'src-address', $customer->ip_address
+        ])->read();
 
        if (empty($response)) return;
 
