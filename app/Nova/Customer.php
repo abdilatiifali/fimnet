@@ -4,6 +4,7 @@ namespace App\Nova;
 
 use App\Enums\CustomerStatus;
 use App\Enums\PaymentType;
+use App\Nova\Actions\BulkPaymentCash;
 use App\Nova\Actions\DisconnectCustomer;
 use App\Nova\Actions\ReconnectCustomers;
 use App\Nova\Actions\SendCustomerStatement;
@@ -206,9 +207,11 @@ class Customer extends Resource
      *
      * @return array
      */
+
     public function actions(Request $request)
     {
         return [
+            new BulkPaymentCash,
             new SendPaymentReminder,
             new SendCustomerStatement,
             new SendSms,

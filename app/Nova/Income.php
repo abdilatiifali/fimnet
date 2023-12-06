@@ -62,7 +62,7 @@ class Income extends Resource
             BelongsTo::make('Customer')->onlyOnDetail(),
         ];
     }
-
+    
     /**
      * Get the cards available for the request.
      *
