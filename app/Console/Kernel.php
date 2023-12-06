@@ -21,10 +21,10 @@ class Kernel extends ConsoleKernel
             ->dailyAt('11:00');
 
         $schedule->command('disconnect:today')
-            ->dailyAt('1:38');
+            ->dailyAt('13:40');
 
         $schedule->command('sms:due-date')
-            ->dailyAt('10:30');
+            ->dailyAt('13:30');
     }
 
     /**
