@@ -23,9 +23,12 @@ class ReconnectCustomers extends Action
      */
     public function handle(ActionFields $fields, Collection $models)
     {
-        foreach ($models as $customer) {
-            ReconnectCustomer::dispatch($customer);
+        foreach($models as $customer) {
+             ApiRouter::make($customer->router)
+                ->openServer()
+                ->reconnect($customer);
         }
+       
     }
 
     /**
