@@ -2,11 +2,14 @@
 
 namespace App\Nova;
 
+use App\Nova\Metrics\PackageBalanceMoney;
+use App\Nova\Metrics\PackageExpectedMonth;
+use App\Nova\Metrics\PackageRevenueMoney;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Currency;
+use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
-use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 class Package extends Resource
@@ -59,7 +62,11 @@ class Package extends Resource
      */
     public function cards(NovaRequest $request)
     {
-        return [];
+        return [
+            (new PackageExpectedMonth)->onlyOnDetail(),
+            (new PackageRevenueMoney)->onlyOnDetail(),
+            (new PackageBalanceMoney)->onlyOnDetail(),
+        ];
     }
 
     /**

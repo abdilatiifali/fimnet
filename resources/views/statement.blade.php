@@ -288,7 +288,7 @@
     <tr>
       <td class="payment-info">
         <div>
-          Paybill No: <strong>{{ config('mpesa.shortCode') }}</strong>
+          Paybill No: <strong>{{ config('services.mpesa.shortCode') }}</strong>
         </div>
         <div>
           Account No: <strong>{{ $customer->mpesaId }}</strong>
