@@ -24,7 +24,6 @@ class CustomersImport implements ToModel
         return new Customer([
             'name' => $row[0] ?? 'No name',
             'mpesaId' => $row[1],
-            'appartment' => $row[1] ?? 'nill',
             'username' => $row[1],
             'password' => $row[1],
             'due_date' => Carbon::parse(trim($row[2], '"'))->format('d-M-Y'),

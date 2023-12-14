@@ -22,6 +22,11 @@ Route::post('/validation', [PaymentsController::class, 'validation']);
 Route::get('/registerUrl', [PaymentsController::class, 'registerUrl']);
 Route::post('/confirmation', [PaymentsController::class, 'confirmation']);
 
+Route::get('/fimnet2RegisterUrl', [PaymentsController::class, 'fimnet2RegisterUrl']);
+
+Route::post('/fimnet2Confirmation', [PaymentsController::class, 'confirmation']);
+Route::post('/fimnet2Validation', [PaymentsController::class, 'validation']);
+
 Route::redirect('/', '/admin');
 
 Route::get('/invoice/{id}', function ($id) {

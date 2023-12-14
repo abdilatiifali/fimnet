@@ -97,7 +97,7 @@ class EventServiceProvider extends ServiceProvider
         });
 
         Customer::creating(function ($customer) {
-            $customer->amount = $customer?->package->price;
+            $customer->amount = $customer?->package?->price;
             event(new CustomerCreated($customer));
         });
 

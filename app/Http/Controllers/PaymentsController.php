@@ -26,6 +26,29 @@ class PaymentsController extends Controller
         return $response;
     }
 
+    public function fimnet2Token()
+    {
+        $response = Http::withBasicAuth(
+            config('services.fimnet2.key'),
+            config('services.fimnet2.secret'),
+        )
+            ->get(config('services.fimnet2.tokenUrl'))
+            ->json(['access_token']);
+
+        return $response;
+    }
+
+     public function fimnet2RegisterUrl()
+    {
+        return Http::withToken($this->fimnet2Token())
+            ->post(config('services.fimnet2.registerUrl'), [
+                'ValidationURL' => env('APP_URL').'/fimnet2Validation',
+                'ConfirmationURL' => env('APP_URL').'/fimnet2Confirmation',
+                'ResponseType' => 'completed',
+                'ShortCode' => config('services.fimnet2.shortCode'),
+            ])->json();
+    }
+
     public function registerUrl()
     {
         return Http::withToken($this->token())
@@ -50,12 +73,12 @@ class PaymentsController extends Controller
             ]);
         }
 
-        if (request('BusinessShortCode') !== config('services.mpesa.shortCode')) {
-            return response()->json([
-                'ResultCode' => 'C2B00015',
-                'ResultDesc' => 'Rejected',
-            ]);
-        }
+        // if (request('BusinessShortCode') !== config('services.mpesa.shortCode')) {
+        //     return response()->json([
+        //         'ResultCode' => 'C2B00015',
+        //         'ResultDesc' => 'Rejected',
+        //     ]);
+        // }
 
         if (request('TransAmount') < $customer->amount) {
             return response()->json([

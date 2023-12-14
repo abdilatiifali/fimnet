@@ -45,6 +45,16 @@ return [
         'registerUrl' => env('MPESA_REGISTER_URL'),
     ],
 
+    'fimnet2' => [
+        'key' => env('FIMNET_TWO_KEY'),
+        'secret' => env('FIMNET_TWO_SECRET'),
+        'shortCode' => env('FIMNET_TWO_SHORTCODE'),
+        'passKey' => env('FIMNET2_MPESA_PASSKEY'),
+        'tokenUrl' => env('MPESA_TOKEN_URL'),
+        'stdkUrl' => env('MPESA_STDKURL'),
+        'registerUrl' => env('MPESA_REGISTER_URL'),
+    ],
+
     'sms' => [
         'shortCode' => env('SMS_SHORTCODE'),
         'apiKey' => env('SMS_API_KEY'),
