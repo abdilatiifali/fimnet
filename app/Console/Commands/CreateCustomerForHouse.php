@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands;
 
+use App\Enums\CustomerStatus;
+use App\Jobs\UpdateSubscribersPerHouse;
 use App\Models\Customer;
 use App\Models\Month;
 use Illuminate\Console\Command;
@@ -30,15 +32,16 @@ class CreateCustomerForHouse extends Command
     public function handle()
     {
         $month = Month::where('month', $this->argument('month'))->firstOrFail();
-        $customers = Customer::where('house_id', $this->argument('house'))->get();
 
-        $customers->each(function ($customer) use ($month) {
-            $customer->subscriptions()->attach($month, [
-                'amount' => $customer->amount,
-                'balance' => $customer->amount,
-            ]);
-        });
+        $customers = Customer::with('subscriptions')
+            ->where('house_id', $this->argument('house'))
+            ->where('status', '!=', CustomerStatus::blocked->value)
+            ->where('amount', '>', 0)
+            ->get();
+
+        UpdateSubscribersPerHouse::dispatch($customers, $month);
 
         $this->info('done');
+
     }
 }

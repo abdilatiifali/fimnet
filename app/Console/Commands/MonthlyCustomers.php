@@ -41,11 +41,12 @@ class MonthlyCustomers extends Command
                 $customer->subscriptions()->attach($month, [
                     'amount' => $customer->amount,
                     'balance' => $customer->amount,
-                    'session_id' => 1,
+                    'session_id' => config('app.year'),
                 ]);
             }
 
-            $customer->update(['status' => CustomerStatus::active->value]);
+            $customer->status = CustomerStatus::active->value;
+            $customer->saveQuietly();
         }
 
         $this->info('done');
