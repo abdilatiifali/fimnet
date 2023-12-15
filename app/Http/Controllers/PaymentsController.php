@@ -38,7 +38,30 @@ class PaymentsController extends Controller
         return $response;
     }
 
-     public function fimnet2RegisterUrl()
+    public function fimnetThreeToken()
+    {
+        $response = Http::withBasicAuth(
+            config('services.fimnet3.key'),
+            config('services.fimnet3.secret'),
+        )
+            ->get(config('services.fimnet3.tokenUrl'))
+            ->json(['access_token']);
+
+        return $response;
+    }
+
+    public function fimnetThreeRegisterUrl()
+    {
+        return Http::withToken($this->fimnetThreeToken())
+            ->post(config('services.fimnet3.registerUrl'), [
+                'ValidationURL' => env('APP_URL').'/fimnetThreeValidation',
+                'ConfirmationURL' => env('APP_URL').'/fimnetThreeConfirmation',
+                'ResponseType' => 'completed',
+                'ShortCode' => config('services.fimnet3.shortCode'),
+            ])->json();
+    }
+
+    public function fimnet2RegisterUrl()
     {
         return Http::withToken($this->fimnet2Token())
             ->post(config('services.fimnet2.registerUrl'), [

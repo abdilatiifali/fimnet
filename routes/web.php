@@ -18,14 +18,20 @@ Route::get('/quotations/{id}', [QuotationController::class, 'show']);
 
 Route::get('/statement/{customer}', [PdfController::class, 'index']);
 
+// FIMNET ONE
 Route::post('/validation', [PaymentsController::class, 'validation']);
 Route::get('/registerUrl', [PaymentsController::class, 'registerUrl']);
 Route::post('/confirmation', [PaymentsController::class, 'confirmation']);
 
+// FIMNET TWO
 Route::get('/fimnet2RegisterUrl', [PaymentsController::class, 'fimnet2RegisterUrl']);
-
 Route::post('/fimnet2Confirmation', [PaymentsController::class, 'confirmation']);
 Route::post('/fimnet2Validation', [PaymentsController::class, 'validation']);
+
+// FIMNET THREE
+Route::get('/fimnetThreeRegisterUrl', [PaymentsController::class, 'fimnetThreeRegisterUrl']);
+Route::post('/fimnetThreeValidation', [PaymentsController::class, 'validation']);
+Route::post('/fimnetThreeConfirmation', [PaymentsController::class, 'confirmation']);
 
 Route::redirect('/', '/admin');
 
