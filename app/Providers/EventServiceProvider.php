@@ -44,11 +44,6 @@ class EventServiceProvider extends ServiceProvider
     {
         parent::boot();
 
-        Income::creating(function ($pivot) {
-            $pivot->month_id = now()->month;
-            $pivot->house_id = Customer::find($pivot->customer_id)->house_id;
-        });
-
         Quotation::creating(function ($pivot) {
             $customer = Customer::findOrFail($pivot->customer_id);
             $subscription = Subscription::where('customer_id', $pivot->customer_id)
