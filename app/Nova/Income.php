@@ -15,6 +15,9 @@ use Laravel\Nova\Http\Requests\NovaRequest;
 
 class Income extends Resource
 {
+    public static $sort = [
+        'id' => 'desc'
+    ];
     /**
      * The model the resource corresponds to.
      *
@@ -41,6 +44,17 @@ class Income extends Resource
         'transaction_time',
     ];
 
+    public static function indexQuery(NovaRequest $request, $query)
+    {
+        if (empty($request->get('orderBy'))) {
+            $query->getQuery()->orders = [];
+
+            return $query->orderBy(key(static::$sort), reset(static::$sort));
+        }
+
+        return $query;
+    }
+
     /**
      * Get the fields displayed by the resource.
      *
@@ -59,7 +73,7 @@ class Income extends Resource
             DateTime::make('Transaction Time', 'transaction_time')->sortable(),
             Text::make('Paid By', 'paid_by'),
             Text::make('Phone Number', 'phone_number'),
-            BelongsTo::make('Customer')->onlyOnDetail(),
+            BelongsTo::make('Customer')->searchable()->hideFromIndex(),
         ];
     }
     

@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Enums\CustomerStatus;
 use App\Listeners\CheckIfTheIpIsNated;
 use App\Models\Customer;
+use App\Models\Income;
 use App\Models\Quotation;
 use App\Models\Subscription;
 use App\Network\ApiRouter;
@@ -42,6 +43,11 @@ class EventServiceProvider extends ServiceProvider
     public function boot()
     {
         parent::boot();
+
+        Income::creating(function ($pivot) {
+            $pivot->month_id = now()->month;
+            $pivot->house_id = Customer::find($pivot->customer_id)->house_id;
+        });
 
         Quotation::creating(function ($pivot) {
             $customer = Customer::findOrFail($pivot->customer_id);

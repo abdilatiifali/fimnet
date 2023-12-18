@@ -17,4 +17,10 @@ class Income extends Model
     {
         return $this->belongsTo(Customer::class);
     }
+
+    public function month()
+    {
+        return $this->belongsTo(Month::class);
+    }
+
 }
