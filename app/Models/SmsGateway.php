@@ -36,9 +36,9 @@ class SmsGateway
 
     public static function sendSms($customer)
     {
-        $payblill = config('services.mpesa.shortCode');
+        $paybill = $customer->house->district->paybill_number;
 
-        $message = "Hello {$customer->name}, this is a reminder from FIMNET COMMUNICATION that your payment is now due for our services. Please Pay as soon as possible. Our paybill number is ${payblill}  and your account number is {$customer->mpesaId}. You can call us from 0745683323 or 0799903635 Thanks.";
+        $message = "Hello {$customer->name}, this is a reminder from FIMNET COMMUNICATION that your payment is now due for our services. Please Pay as soon as possible. Our paybill number is ${paybill}  and your account number is {$customer->mpesaId}. You can call us from 0745683323 or 0799903635 Thanks.";
 
         static::sendSmsApi($customer->phone_number, $message);
 

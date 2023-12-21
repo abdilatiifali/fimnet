@@ -46,7 +46,7 @@ class District extends Resource
         return [
             ID::make(__('ID'), 'id')->sortable(),
             Text::make('Name'),
-
+            Text::make('Paybill Number', 'paybill_number')->nullable(),
             HasMany::make('Houses'),
         ];
     }
