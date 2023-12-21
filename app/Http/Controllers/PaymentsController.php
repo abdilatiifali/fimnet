@@ -14,6 +14,13 @@ use Carbon\Carbon;
 
 class PaymentsController extends Controller
 {
+
+    protected $paybillNames = [
+        1 => 'mpesa',
+        2 => 'fimnet2',
+        3 => 'fimnet3'
+    ];
+
     public function token()
     {
         $response = Http::withBasicAuth(
@@ -116,11 +123,6 @@ class PaymentsController extends Controller
         ]);
     }
 
-    public function excessAmount($customer, $amount)
-    {
-        return $amount > $customer->amount ? $amount - $customer->amount : 0;
-    }
-
     public function formatDate($transTime)
     {
         $parsedDateTime = Carbon::createFromFormat('YmdHis', $transTime);
@@ -146,22 +148,17 @@ class PaymentsController extends Controller
             ? $this->updateSubscription($customer, $pivot, request('TransAmount'))
             : $pivot = $this->createSubscription($customer, request('TransAmount'));
 
-        Income::create([
-            'code' => request('TransID'),
-            'transaction_time' => $formattedDate,
-            'paid_by' => request('FirstName'),
-            'customer_id' => $customer->id,
-            'month_id' => Month::where('id', now()->month)->first()->id,
-            'amount_paid' => request('TransAmount'),
-            'excess_amount' => $this->excessAmount($customer, request('TransAmount')),
-            'balance' => $customer->amount - request('TransAmount'),
-            'phone_number' => request('MSISDN'),
-            'account_number' => request('BillRefNumber'),
-            'router_id' => $customer->router->id ?? null,
-            'house_id' => $customer->house->id,
-        ]);
+        (new Income)->make(
+            $customer, 
+            request('TransID'), 
+            $formattedDate, 
+            request('FirstName'),
+            request('TransAmount'),
+            request('MSISDN'),
+            request('BillRefNumber')
+        );
 
-         event(new CustomerSubscriptionUpdated($pivot));       
+        event(new CustomerSubscriptionUpdated($pivot));       
 
         return 'done';
     }
@@ -198,11 +195,19 @@ class PaymentsController extends Controller
     public function stkdpush(Request $request)
     {
         $customer = Customer::findOrFail($request->customerId);
+        $area = $this->paybillNames[$customer->house->district->id];
 
-        $passKey = config('services.mpesa.passKey');
+        if (!$area) return;
+
+        $phoneNumber =  preg_replace('/^.*?(?=7)/', '254', $customer->phone_number);
+        $code = config("services.${area}.shortCode");
+        $passKey = config("services.${area}.passKey");
         $timestap = date('YmdHis');
-        $code = config('services.mpesa.shortCode');
 
+        \Log::info($code);
+        \Log::info($phoneNumber);
+        \Log::info(config('services.mpesa.stdkUrl'));
+        
         $response = Http::withToken($this->token())
             ->post(config('services.mpesa.stdkUrl'), [
                 'BusinessShortCode' => $code,
@@ -210,12 +215,12 @@ class PaymentsController extends Controller
                 'Timestamp' => $timestap,
                 'TransactionType' => 'CustomerPayBillOnline',
                 'Amount' => $customer->balance(),
-                'PartyA' => $customer->phone_number,
+                'PartyA' => $phoneNumber,
                 'PartyB' => $code,
-                'PhoneNumber' => $customer->phone_number,
+                'PhoneNumber' => $phoneNumber,
                 'CallBackURL' => config('app.url').'/callback',
-                'AccountReference' => 'Test',
-                'TransactionDesc' => 'Test',
+                'AccountReference' => 'FIMNET COMMUNICATION LTD',
+                'TransactionDesc' => 'PAY MONTHLY INTERNEET FEE',
             ]);
 
         return response()->json([
@@ -226,22 +231,22 @@ class PaymentsController extends Controller
     public function callback(Request $request)
     {
         \Log::info(request('Body'));
-        if (request('Body')['stkCallback']['ResultCode'] != 0) {
-            \Log::info('cancelled');
 
-            return;
-        }
+        if (request('Body')['stkCallback']['ResultCode'] != 0) return;
 
         $amount = request('Body')['stkCallback']['CallbackMetadata']['Item'][0]['Value'];
+        $code = request('Body')['stkCallback']['CallbackMetadata']['Item'][1]['Value'];
+        $formattedDate = $this->formatDate(
+            request('Body')['stkCallback']['CallbackMetadata']['Item'][2]['Value']
+        );
+
         $phoneNumber = request('Body')['stkCallback']['CallbackMetadata']['Item'][3]['Value'];
+        $phoneNumber = preg_replace('/^.*?(?=7)/', '0', $phoneNumber);
 
-        \Log::info([$amount, $phoneNumber]);
-
-        $customer = Customer::where('phone_number', $phoneNumber)->first();
+        $customer = Customer::where('phone_number',  $phoneNumber)->first();
 
         if (! $customer) {
-            \Log::inf('there is no a customer available');
-
+            \Log::info('there is no a customer available');
             return;
         }
 
@@ -253,6 +258,16 @@ class PaymentsController extends Controller
         $pivot
             ? $this->updateSubscription($customer, $pivot, $amount)
             : $pivot = $this->createSubscription($customer, $amount);
+
+        (new Income)->make(
+            $customer, 
+            $code,
+            $formattedDate, 
+            'stdkpush',
+            $amount,
+            $phoneNumber,
+            $customer->mpesaId
+        );
 
         event(new CustomerSubscriptionUpdated($pivot));
 
