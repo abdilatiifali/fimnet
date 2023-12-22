@@ -31,7 +31,7 @@ class importIncome extends Command
     {
         Excel::import(
             new IncomeImport,
-            base_path("files/income/fimnet2.xlsx"),
+            base_path("files/income/fimnetThree.xlsx"),
         );
 
         $this->info('done');

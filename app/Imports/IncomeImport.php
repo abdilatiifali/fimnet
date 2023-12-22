@@ -7,6 +7,7 @@ use App\Models\Income;
 use App\Models\Subscription;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\ToModel;
+use App\Enums\PaymentType;
 
 class IncomeImport implements ToModel
 {
@@ -24,20 +25,15 @@ class IncomeImport implements ToModel
 
         if (!$customer) return;
 
-         $pivot = Subscription::where('customer_id', $customer->id)
+        $pivot = Subscription::where('customer_id', $customer->id)
                 ->where('month_id', now()->month)
                 ->where('session_id', config('app.year'))
                 ->first();
 
-        if (! $pivot ) return;
+        $pivot
+            ? $this->updateSubscription($customer, $pivot, $row[2])
+            : $pivot = $this->createSubscription($customer, $row[2]);
 
-
-        $pivot->update([
-            'amount_paid' => $row[2] + $pivot->amount_paid,
-            'payment_type' => 'mpesa',
-            'paid' => true,
-            'balance' => $pivot->amount - (intval($row[2]) + $pivot->amount_paid),
-        ]);
 
         Income::create([
             'code' => $row[0],
@@ -54,5 +50,31 @@ class IncomeImport implements ToModel
             'house_id' => $customer->house->id,
         ]);
 
+    }
+
+    public function updateSubscription($customer, $pivot, $amount)
+    {
+        return $pivot->update([
+            'amount_paid' => $amount + $pivot->amount_paid,
+            'payment_type' => 'mpesa',
+            'paid' => true,
+            'balance' => $pivot->amount - (intval($amount) + $pivot->amount_paid),
+        ]);
+    }
+
+    public function createSubscription($customer, $transAmount)
+    {
+        $subscription = Subscription::create([
+            'customer_id' => $customer->id,
+            'month_id' => now()->month,
+            'session_id' => config('app.year'),
+            'amount' => $customer->amount,
+            'amount_paid' => intval($transAmount),
+            'payment_type' => PaymentType::mpesa->value,
+            'balance' => $customer->amount - intval($transAmount),
+            'paid' => true,
+        ]);
+
+        return $subscription;
     }
 }
