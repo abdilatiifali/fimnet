@@ -27,7 +27,7 @@ class Kernel extends ConsoleKernel
             ->dailyAt('13:30');
 
         $schedule->command('monthly:customers')
-            ->monthlyOn('00:05');
+            ->monthlyOn(1, '00:05');
 
         $schedule->command('create:session')
             ->yearly();
