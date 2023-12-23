@@ -2,8 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Enums\CustomerStatus;
-use App\Models\Customer;
+use App\Jobs\NewMonthlyCustomers;
 use App\Models\Month;
 use Illuminate\Console\Command;
 
@@ -14,7 +13,7 @@ class MonthlyCustomers extends Command
      *
      * @var string
      */
-    protected $signature = 'monthly:customers {month}';
+    protected $signature = 'monthly:customers';
 
     /**
      * The console command description.
@@ -30,24 +29,9 @@ class MonthlyCustomers extends Command
      */
     public function handle()
     {
-        $month = Month::where('month', $this->argument('month'))->firstOrFail();
+        $month = Month::findOrFail(now()->month);
 
-        $customers = Customer::where('status', '!=', CustomerStatus::blocked->value)
-            ->where('amount', '>', 0)
-            ->lazy();
-
-        foreach ($customers as $customer) {
-            if (! $customer->subscriptions->contains($month)) {
-                $customer->subscriptions()->attach($month, [
-                    'amount' => $customer->amount,
-                    'balance' => $customer->amount,
-                    'session_id' => config('app.year'),
-                ]);
-            }
-
-            $customer->status = CustomerStatus::active->value;
-            $customer->saveQuietly();
-        }
+        NewMonthlyCustomers::dispatch($month);
 
         $this->info('done');
     }

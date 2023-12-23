@@ -30,6 +30,8 @@ class AppServiceProvider extends ServiceProvider
         $session = \DB::table('sessions')
             ->where('year', now()->year)->first();
 
+        if (!$session) return;
+        
         if (! session()->has('year')) {
             session()->put('year', $session->id);
         }
