@@ -21,6 +21,12 @@ class PaymentsController extends Controller
         3 => 'fimnet3'
     ];
 
+    protected $tokens = [
+        1 => 'token',
+        2 => 'fimnet2Token',
+        3 => 'fimnetThreeToken',
+    ];
+
     public function token()
     {
         $response = Http::withBasicAuth(
@@ -194,8 +200,15 @@ class PaymentsController extends Controller
 
     public function stkdpush(Request $request)
     {
+        \Log::info('stdk');
         $customer = Customer::findOrFail($request->customerId);
-        $area = $this->paybillNames[$customer->house->district->id];
+        $id = $customer->house->district->id;
+        $area = $this->paybillNames[$id];
+        $method = $this->tokens[$id];
+
+        \Log::info($id);
+        \Log::info($method);
+        \Log::info($area);
 
         if (!$area) return;
 
@@ -204,11 +217,13 @@ class PaymentsController extends Controller
         $passKey = config("services.${area}.passKey");
         $timestap = date('YmdHis');
 
-        \Log::info($code);
         \Log::info($phoneNumber);
-        \Log::info(config('services.mpesa.stdkUrl'));
-        
-        $response = Http::withToken($this->token())
+        \Log::info($code);
+        \Log::info($passKey);
+        \Log::info($timestap);
+        \Log::info($this->$method());
+
+        $response = Http::withToken($this->$method())
             ->post(config('services.mpesa.stdkUrl'), [
                 'BusinessShortCode' => $code,
                 'Password' => base64_encode($code.$passKey.$timestap),
@@ -221,8 +236,9 @@ class PaymentsController extends Controller
                 'CallBackURL' => config('app.url').'/callback',
                 'AccountReference' => 'FIMNET COMMUNICATION LTD',
                 'TransactionDesc' => 'PAY MONTHLY INTERNEET FEE',
-            ]);
+            ])->json();
 
+        \Log::info($response);
         return response()->json([
             'message' => 'successfully pushed',
         ], 200);
@@ -237,10 +253,10 @@ class PaymentsController extends Controller
         $amount = request('Body')['stkCallback']['CallbackMetadata']['Item'][0]['Value'];
         $code = request('Body')['stkCallback']['CallbackMetadata']['Item'][1]['Value'];
         $formattedDate = $this->formatDate(
-            request('Body')['stkCallback']['CallbackMetadata']['Item'][2]['Value']
+            request('Body')['stkCallback']['CallbackMetadata']['Item'][3]['Value']
         );
 
-        $phoneNumber = request('Body')['stkCallback']['CallbackMetadata']['Item'][3]['Value'];
+        $phoneNumber = request('Body')['stkCallback']['CallbackMetadata']['Item'][4]['Value'];
         $phoneNumber = preg_replace('/^.*?(?=7)/', '0', $phoneNumber);
 
         $customer = Customer::where('phone_number',  $phoneNumber)->first();
