@@ -33,6 +33,7 @@ class Income extends Model
             'month_id' => now()->month,
             'amount_paid' => $transAmount,
             'excess_amount' => $this->excessAmount($customer, $transAmount),
+            'session_id' => session('year'),
             'balance' => $customer->amount - $transAmount,
             'phone_number' => $phoneNumber,
             'account_number' => $mpesaId,
