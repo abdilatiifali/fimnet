@@ -25,7 +25,7 @@ class CustomerFilter extends Filter
      */
     public function apply(NovaRequest $request, $query, $value)
     {
-        return $query->wher('customer_id', $value);
+        return $query->where('customer_id', $value);
     }
 
     /**
