@@ -49,10 +49,12 @@ class Income extends Resource
         if (empty($request->get('orderBy'))) {
             $query->getQuery()->orders = [];
 
-            return $query->orderBy(key(static::$sort), reset(static::$sort));
+            return $query
+                ->where('session_id', session('year'))
+                ->orderBy(key(static::$sort), reset(static::$sort));
         }
 
-        return $query;
+        return $query->where('session_id', session('year'));
     }
 
     /**

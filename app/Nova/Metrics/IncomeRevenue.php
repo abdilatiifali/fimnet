@@ -28,7 +28,8 @@ class IncomeRevenue extends Value
     {
         $total = collect();
 
-        $incomes = Income::where('month_id', now()->month);
+        $incomes = Income::where('month_id', now()->month)
+                        ->where('session_id', session('year'));
 
         return $total->put(now()->month, $incomes->sum('amount_paid'))->toArray();
 
