@@ -91,7 +91,8 @@ class Customer extends Resource
             Text::make('Name'),
 
             Text::make('Account ', 'mpesaId')
-                ->rules('required'),
+                ->rules('required')
+                ->sortable(),
 
             Text::make('Username')
                 ->rules('required')
