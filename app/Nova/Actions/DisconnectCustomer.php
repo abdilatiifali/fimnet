@@ -2,6 +2,7 @@
 
 namespace App\Nova\Actions;
 
+use App\Jobs\DisconnectCustomers;
 use App\Models\Router;
 use App\Network\ApiRouter;
 use Illuminate\Bus\Queueable;
@@ -22,11 +23,16 @@ class DisconnectCustomer extends Action
      */
     public function handle(ActionFields $fields, Collection $models)
     {
-        foreach ($models as $customer) {
-            ApiRouter::make(Router::findOrFail($customer->router_id))
-                ->openServer()
-                ->disconnectBy($customer);
-        }
+
+        DisconnectCustomers::dispatch($models, $models[0]->router_id);
+
+        // foreach ($models as $customer) {
+
+        //     DisconnectionHandler::
+        //     ApiRouter::make(Router::findOrFail($customer->router_id))
+        //         ->openServer()
+        //         ->disconnectBy($customer);
+        // }
     }
 
     /**
