@@ -40,7 +40,7 @@ class Customer extends Resource
 {
     public static $perPageOptions = [25, 50, 100];
 
-    public static $perPageViaRelationship = 20;
+    public static $perPageViaRelationship = 100;
 
     /**
      * The model the resource corresponds to.
