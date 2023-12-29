@@ -1,4 +1,5 @@
 @extends('layouts.master')
+@include('components.header')
 @section('content')
   <main>
     <div class="relative isolate overflow-hidden pt-16">

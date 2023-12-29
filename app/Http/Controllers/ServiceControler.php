@@ -27,7 +27,8 @@ class ServiceControler extends Controller
             'package_id' => $newPackage->id,
         ]);
 
-        return redirect("/client");
+        return back()
+            ->with(['status' => 'Successfully updated']);
     }
 
     public function comparePlan($newPackage, $oldPackage)

@@ -1,5 +1,5 @@
 @extends('layouts.master')
-
+@include('components.header')
 @section('content')
 
 	<div class="flex  min-h-full flex-col justify-center pt-24 pb-32 sm:px-6 lg:px-8">

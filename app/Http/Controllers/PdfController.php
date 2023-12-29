@@ -14,7 +14,7 @@ class PdfController extends Controller
 
         $customer = Customer::findOrFail($customerId);
 
-        $shortCode = $customer->house->district->payblill_number;
+        $shortCode = $customer->house->district->paybill_number;
 
         $subscriptions = Subscription::where('customer_id', $customer->id)
             ->get();

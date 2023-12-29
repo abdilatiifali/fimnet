@@ -2,13 +2,12 @@
 
 @section('content')
 
-<div class="pt-24 flex min-h-full flex-col justify-center pb-32 sm:px-6 lg:px-8">
-  <div class="sm:mx-auto sm:w-full sm:max-w-md">
-    <img class="mx-auto h-10 w-auto" src="{{ asset('fimnet-logo.png') }}" alt="Your Company">
-    <h2 class="mt-6 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Sign in to your account</h2>
+<div class="flex min-h-full flex-col justify-center pb-32 sm:px-6 lg:px-8">
+  <div class="mt-4 sm:mx-auto sm:w-full sm:max-w-md">
+    <img class="mx-auto w-auto" style="height: 150px; width: 150px;"  src="{{ asset('fimnet-logo.png') }}" alt="Your Company">
   </div>
 
-  <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
+  <div class="px-4 sm:px-0 sm:mx-auto sm:w-full sm:max-w-[480px]">
     <div class="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
       @if ($errors->any())
         @foreach ($errors->all() as $error)
@@ -16,6 +15,7 @@
         @endforeach
       @endif
       <form class="space-y-6" action="/login" method="POST">
+          <h2 class="py-2 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Sign in to your account</h2>
         @csrf
         <div>
           <label for="username" class="block text-sm font-medium leading-6 text-gray-900">Username</label>
@@ -37,12 +37,12 @@
       </form>
     </div>
 
-    <p class="mt-10 text-center text-sm text-gray-500">
+   {{--  <p class="mt-10 text-center text-sm text-gray-500">
       Not sure about username or password?
       <a href="#" class="font-semibold leading-6 text-red-600 hover:text-red-500">
         Send us email.
       </a>
-    </p>
+    </p> --}}
   </div>
 </div>
 
