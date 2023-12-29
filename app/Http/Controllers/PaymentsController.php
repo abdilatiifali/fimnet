@@ -3,14 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Enums\PaymentType;
+use App\Jobs\PaymentConfirmation;
 use App\Models\Customer;
 use App\Models\Income;
 use App\Models\Month;
 use App\Models\Subscription;
 use App\Providers\CustomerSubscriptionUpdated;
+use Carbon\Carbon;
 use Http;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
 
 class PaymentsController extends Controller
 {
@@ -200,15 +201,14 @@ class PaymentsController extends Controller
 
     public function stkdpush(Request $request)
     {
-        \Log::info('stdk');
-        $customer = Customer::findOrFail($request->customerId);
+        $customer = auth()->user();
         $id = $customer->house->district->id;
         $area = $this->paybillNames[$id];
         $method = $this->tokens[$id];
 
+        \Log::info($area);
         \Log::info($id);
         \Log::info($method);
-        \Log::info($area);
 
         if (!$area) return;
 
@@ -217,12 +217,9 @@ class PaymentsController extends Controller
         $passKey = config("services.${area}.passKey");
         $timestap = date('YmdHis');
 
-        \Log::info($phoneNumber);
         \Log::info($code);
         \Log::info($passKey);
-        \Log::info($timestap);
-        \Log::info($this->$method());
-
+        
         $response = Http::withToken($this->$method())
             ->post(config('services.mpesa.stdkUrl'), [
                 'BusinessShortCode' => $code,
@@ -233,20 +230,22 @@ class PaymentsController extends Controller
                 'PartyA' => $phoneNumber,
                 'PartyB' => $code,
                 'PhoneNumber' => $phoneNumber,
-                'CallBackURL' => config('app.url').'/callback',
+                'CallBackURL' => "https://fimnetplus.com/callback",
                 'AccountReference' => 'FIMNET COMMUNICATION LTD',
                 'TransactionDesc' => 'PAY MONTHLY INTERNEET FEE',
             ])->json();
 
-        \Log::info($response);
-        return response()->json([
-            'message' => 'successfully pushed',
-        ], 200);
+        dd($response);
+        return redirect('/client');
     }
 
     public function callback(Request $request)
     {
         \Log::info(request('Body'));
+        
+        if (request('Body')['stkCallback']['ResultCode'] == 1032) {
+            return redirect('/client');
+        }
 
         if (request('Body')['stkCallback']['ResultCode'] != 0) return;
 
@@ -286,6 +285,8 @@ class PaymentsController extends Controller
         );
 
         event(new CustomerSubscriptionUpdated($pivot));
+
+        PaymentConfirmation::dispatch($customer);
 
         \Log::info('done');
 

@@ -7,6 +7,11 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
+    public function loginForm()
+    {
+        return view('client.index');
+    }
+
     public function validateInput($request)
     {
         return $request->validate([
@@ -19,13 +24,9 @@ class AuthController extends Controller
     {
         if (Auth::guard('api')->attempt($this->validateInput($request))) {
             $request->session()->regenerate();
-
-            return response()->json([], 204);
         }
 
-        return response()->json([
-            'error' => 'Invalid credentials',
-        ], 401);
+        return back()->withErrors(['message' => 'Invalid Crediantials']);
     }
 
     public function destory(Request $request)
@@ -36,8 +37,6 @@ class AuthController extends Controller
 
         $request->session()->regenerateToken();
 
-        return response()->json([
-            'message' => 'successfully logout',
-        ]);
+        return redirect('/');
     }
 }

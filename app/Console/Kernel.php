@@ -15,7 +15,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('disconnect:customers')
-            ->dailyAt('9:30');
+            ->dailyAt('10:30');
 
         $schedule->command('send:payment-reminder')
             ->dailyAt('11:00');

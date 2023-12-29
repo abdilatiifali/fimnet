@@ -104,6 +104,7 @@ class EventServiceProvider extends ServiceProvider
 
         Customer::updating(function ($customer) {
             $customer->amount = $customer->package->price;
+
             if (! $customer->router || ! filter_var($customer->ip_address, FILTER_VALIDATE_IP)) {
                 return;
             }

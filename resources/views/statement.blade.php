@@ -288,7 +288,7 @@
     <tr>
       <td class="payment-info">
         <div>
-          Paybill No: <strong>{{ config('services.mpesa.shortCode') }}</strong>
+          Paybill No: <strong>{{  $shortCode }}</strong>
         </div>
         <div>
           Account No: <strong>{{ $customer->mpesaId }}</strong>
@@ -308,10 +308,7 @@
     <span> {{ config('app.company.phone') }} </span> |
     <span>{{ config('app.company.domain') }}</span>
   </div>
-  <div class="footer-thanks">
-{{--     <img src="https://github.com/anvilco/html-pdf-invoice-template/raw/main/img/heart.png" alt="heart">
- --}}    <span>Thank you!</span>
-  </div>
+  Thanks
 </div>
   
 </body>

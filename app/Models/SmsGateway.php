@@ -68,4 +68,11 @@ class SmsGateway
         static::sendSmsApi($customer->phone_number, $message);
 
     }
+
+    public static function sendConfirmation($customer)
+    {
+        $message = "Hi {$customer->name}, Payment received! Your loyalty is greatly appreciated. Thank you.";
+
+        static::sendSmsApi($customer->phone_number, $message);
+    }
 }

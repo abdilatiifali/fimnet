@@ -10,15 +10,18 @@ class PdfController extends Controller
 {
     public function index($customerId)
     {
-        $logo = asset('logo.jpeg');
+        $logo = asset('fimnet-logo.png');
+
         $customer = Customer::findOrFail($customerId);
+
+        $shortCode = $customer->house->district->payblill_number;
 
         $subscriptions = Subscription::where('customer_id', $customer->id)
             ->get();
 
         $groupedSubscriptions = $subscriptions->groupBy('session_id');
 
-        $pdf = Pdf::loadView('statement', compact('logo', 'customer', 'groupedSubscriptions'));
+        $pdf = Pdf::loadView('statement', compact('logo', 'customer', 'shortCode', 'groupedSubscriptions'));
 
         return $pdf->stream('statement.pdf');
     }

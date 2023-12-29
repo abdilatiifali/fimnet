@@ -1,9 +1,12 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ClientController;
 use App\Http\Controllers\PaymentsController;
 use App\Http\Controllers\PdfController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\QuotationController;
+use App\Http\Controllers\ServiceControler;
 use App\Models\Customer;
 use App\Models\Month;
 use App\Models\Subscription;
@@ -12,7 +15,30 @@ use LaravelDaily\Invoices\Classes\InvoiceItem;
 use LaravelDaily\Invoices\Classes\Party;
 use LaravelDaily\Invoices\Invoice;
 
-Route::post('/login', [AuthController::class, 'store']);
+// $url = config('app.url');
+
+Route::domain("client.fimnetplus.com")->group(function(){
+    Route::redirect('/', '/login');
+    Route::get("/login", [AuthController::class, 'loginForm'])->middleware('guest:api');
+    Route::post('/login', [AuthController::class, 'store'])->middleware('guest:api');
+    Route::post('/logout', [AuthController::class, 'destory'])->middleware('auth:api');
+
+    Route::get("/client", [ClientController::class, 'index'])->middleware('auth:api');
+    Route::get("/payments", [ClientController::class, 'payment'])->middleware('auth:api');
+    Route::post('/payments', [PaymentsController::class, 'stkdpush'])->middleware('auth:api');
+
+    Route::get("/services", [ServiceControler::class, 'index'])->middleware('auth:api');
+    Route::post("/services", [ServiceControler::class, 'store'])->middleware('auth:api');
+
+    Route::get("/profile", [ProfileController::class, 'index'])->middleware('auth:api');
+    Route::post("/profile", [ProfileController::class, 'store'])->middleware('auth:api');
+
+    Route::get("/home", function () {
+        return redirect('/client');
+    })->middleware('auth:api');
+    // Route::get("/")
+});
+
 Route::post('/logout', [AuthController::class, 'destory']);
 Route::get('/quotations/{id}', [QuotationController::class, 'show']);
 
@@ -70,7 +96,5 @@ Route::get('/invoice/{id}', function ($id) {
         ->stream();
 
 });
-
-Route::post('/abdi', [PaymentsController::class, 'stkdpush']);
 
 Route::post('/callback', [PaymentsController::class, 'callback']);
