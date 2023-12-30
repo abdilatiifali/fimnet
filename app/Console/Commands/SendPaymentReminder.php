@@ -40,7 +40,10 @@ class SendPaymentReminder extends Command
 
         $batchSize = 20;
 
-        $customerIds = Customer::whereIn('house_id', $houseIds)->pluck('id');
+        $customerIds = Customer::whereIn('house_id', $houseIds)
+                                ->where('due_date', null)
+                                ->where('status', '!=', CustomerStatus::blocked->value)
+                                ->pluck('id');
 
         $customerIds = Subscription::whereIn('customer_id', $customerIds)
             ->where('amount', '>', 0)
