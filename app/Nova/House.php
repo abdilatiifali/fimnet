@@ -5,6 +5,8 @@ namespace App\Nova;
 use App\Nova\Metrics\BalancePerMonth;
 use App\Nova\Metrics\ExpectPerMonth;
 use App\Nova\Metrics\RevenuePerMonth;
+use App\Nova\Metrics\ThroughCash;
+use App\Nova\Metrics\ThroughMpesa;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\HasMany;
@@ -69,6 +71,8 @@ class House extends Resource
             (new ExpectPerMonth)->onlyOnDetail(),
             (new RevenuePerMonth)->onlyOnDetail(),
             (new BalancePerMonth)->onlyOnDetail(),
+            (new ThroughMpesa)->onlyOnDetail()->width('1/2'),
+            (new ThroughCash)->onlyOnDetail()->width('1/2'),
         ];
     }
 
