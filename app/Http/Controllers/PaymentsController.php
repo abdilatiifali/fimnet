@@ -206,19 +206,12 @@ class PaymentsController extends Controller
         $area = $this->paybillNames[$id];
         $method = $this->tokens[$id];
 
-        \Log::info($area);
-        \Log::info($id);
-        \Log::info($method);
-
         if (!$area) return;
 
         $phoneNumber =  preg_replace('/^.*?(?=7)/', '254', $customer->phone_number);
         $code = config("services.${area}.shortCode");
         $passKey = config("services.${area}.passKey");
         $timestap = date('YmdHis');
-
-        \Log::info($code);
-        \Log::info($passKey);
         
         $response = Http::withToken($this->$method())
             ->post(config('services.mpesa.stdkUrl'), [
@@ -231,18 +224,15 @@ class PaymentsController extends Controller
                 'PartyB' => $code,
                 'PhoneNumber' => $phoneNumber,
                 'CallBackURL' => "https://fimnetplus.com/callback",
-                'AccountReference' => 'FIMNET COMMUNICATION LTD',
+                'AccountReference' => $customer->mpesaId,
                 'TransactionDesc' => 'PAY MONTHLY INTERNEET FEE',
             ])->json();
 
-        dd($response);
         return redirect('/client');
     }
 
     public function callback(Request $request)
-    {
-        \Log::info(request('Body'));
-        
+    {        
         if (request('Body')['stkCallback']['ResultCode'] == 1032) {
             return redirect('/client');
         }
@@ -270,15 +260,22 @@ class PaymentsController extends Controller
             ->where('session_id', config('app.year'))
             ->first();
 
-        $pivot
-            ? $this->updateSubscription($customer, $pivot, $amount)
-            : $pivot = $this->createSubscription($customer, $amount);
+        \Log::info($amount);
+        \Log::info('pivot money');
+        \Log::info($pivot->amount_paid);
+
+        $pivot->update([
+            'amount_paid' => $amount,
+            'payment_type' => PaymentType::mpesa->value,
+            'balance' => $pivot->amount - $amount,
+            'paid' => true,
+        ]);
 
         (new Income)->make(
             $customer, 
             $code,
             $formattedDate, 
-            'stdkpush',
+            'stkPush',
             $amount,
             $phoneNumber,
             $customer->mpesaId
