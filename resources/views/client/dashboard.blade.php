@@ -35,9 +35,7 @@
       <!-- Recent activity table -->
       <div>
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div class="flex items-center">
-            <h2 class="mx-auto max-w-2xl text-base font-semibold leading-6 text-gray-900 lg:mx-0 lg:max-w-none">Recent Transaction</h2>
-            <div class="ml-auto flex items-center">
+          <div class="flex items-center justify-between">
               @if ($customer->balance() > 0)
                   <a href="/payments" class="ml-auto flex items-center gap-x-1 rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600">
                   Pay Now
@@ -48,7 +46,9 @@
                   Download Statement
                 </a>
               </div>
-            </div>
+          </div>
+          <div class="mt-16">
+            <h2 class="mx-auto max-w-2xl text-base font-semibold leading-6 text-gray-900 lg:mx-0 lg:max-w-none">Recent Transaction</h2>
           </div>
         </div>
         <div class="mt-6 overflow-hidden border-t border-gray-100">
@@ -73,8 +73,7 @@
                           <div class="text-sm leading-6 text-gray-900">
                             {{ \App\Enums\Month::from($subscription->month_id)->name }}
                           </div>
-{{--                           <div class="mt-1 text-xs leading-5 text-gray-500">Website redesign</div>
- --}}                        </div>
+                        </div>
                       </td>
 
                       <td class="relative py-5 pr-6">
