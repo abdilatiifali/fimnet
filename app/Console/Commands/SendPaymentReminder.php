@@ -53,7 +53,6 @@ class SendPaymentReminder extends Command
             ->pluck('customer_id');
 
         Customer::whereIn('id', $customerIds)
-            ->where('status', CustomerStatus::active->value)
             ->chunk($batchSize, function ($customers) use ($batchSize) {
                 SendSms::dispatch($customers, $batchSize);
             });

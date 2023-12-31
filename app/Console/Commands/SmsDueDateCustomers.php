@@ -47,7 +47,6 @@ class SmsDueDateCustomers extends Command
         Customer::whereIn('id', $customerIds)
             ->where('status', CustomerStatus::active->value)
             ->chunk($batchSize, function ($customers) use ($batchSize) {
-                dd($customers);
                 SendSms::dispatch($customers, $batchSize);
             });
     }
