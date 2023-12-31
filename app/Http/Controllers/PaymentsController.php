@@ -167,6 +167,8 @@ class PaymentsController extends Controller
 
         event(new CustomerSubscriptionUpdated($pivot));       
 
+        PaymentConfirmation::dispatch($customer);
+        
         return 'done';
     }
 
