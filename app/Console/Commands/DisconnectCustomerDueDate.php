@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Enums\CustomerStatus;
+use App\Jobs\DisconnectCustomers;
 use App\Models\Customer;
 use App\Models\Router;
 use App\Models\Subscription;
@@ -35,6 +36,8 @@ class DisconnectCustomerDueDate extends Command
         $customerIds = Customer::where('status', CustomerStatus::active->value)
             ->where('due_date', now()->toDateString())->pluck('id');
 
+        $batchSize = 50;
+
         $customerIds = Subscription::whereIn('customer_id', $customerIds)
             ->where('amount', '>', 0)
             ->where('paid', false)
@@ -42,12 +45,13 @@ class DisconnectCustomerDueDate extends Command
             ->where('month_id', now()->month)
             ->pluck('customer_id');
 
-        Customer::whereIn('id', $customerIds)
-            ->each(function ($customer) {
-                if ($customer->balance() > 0) {
-                    ApiRouter::make(Router::findOrFail($customer->router_id))
-                        ->openServer()
-                        ->disconnectBy($customer);
+         Customer::whereIn('id', $customerIds)
+            ->chunk($batchSize, function ($customers) use ($batchSize) {
+                $customersByRouter = $customers->groupBy('router_id');
+                foreach ($customersByRouter as $routerId => $customers) {
+                    $this->info("Blocking IP addresses for router ID {$routerId}...");
+                    DisconnectCustomers::dispatch($customers, $routerId, $batchSize);
+                    $this->info("IP addresses blocked for router ID {$routerId}");
                 }
             });
 

@@ -9,6 +9,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\Middleware\ThrottlesExceptions;
+use DateTime;
 
 class DisconnectCustomers implements ShouldQueue
 {
@@ -16,6 +18,16 @@ class DisconnectCustomers implements ShouldQueue
 
     public function __construct(public $customers, public $routerId, public $batchSize = 100, public $offset = 0)
     {
+    }
+
+    public function middleware(): array
+    {
+        return [(new ThrottlesExceptions(1, 40))->backoff(now()->addHours(2))];
+    }
+
+    public function retryUntil(): DateTime
+    {
+        return now()->addDays(2);
     }
 
     /**
@@ -31,7 +43,7 @@ class DisconnectCustomers implements ShouldQueue
                 ->openServer()
                 ->disconnect($batch);
         } catch (\Throwable $e) {
-            $this->fail($e);
+            throw $e;
         }
     }
 }

@@ -10,6 +10,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\Middleware\ThrottlesExceptions;
+use DateTime;
 
 class ReconnectCustomer implements ShouldQueue
 {
@@ -24,6 +26,16 @@ class ReconnectCustomer implements ShouldQueue
     {
     }
 
+    public function middleware(): array
+    {
+        return [(new ThrottlesExceptions(1, 40))->backoff(now()->addHours(2))];
+    }
+
+    public function retryUntil(): DateTime
+    {
+        return now()->addDays(2);
+    }
+
     /**
      * Execute the job.
      *
@@ -32,12 +44,14 @@ class ReconnectCustomer implements ShouldQueue
     public function handle()
     {
         $router = Router::findOrFail($this->customer->router_id);
-        ApiRouter::make($router)
-            ->openServer()
-            ->reconnect($this->customer)
-            ->checkFromTheNat($this->customer);
-
-        return;
+        try {
+            ApiRouter::make($router)
+                ->openServer()
+                ->reconnect($this->customer)
+                ->checkFromTheNat($this->customer);
+        } catch(\Throwable $e) {
+            throw $e;
+        }
     }
 
    
