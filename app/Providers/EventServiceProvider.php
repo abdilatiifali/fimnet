@@ -79,10 +79,8 @@ class EventServiceProvider extends ServiceProvider
         });
 
         Pivot::creating(function ($pivot) {
-            if (now()->month == $pivot->month_id) {
-                $customer = Customer::findOrFail($pivot->customer_id);
-                $customer->status = CustomerStatus::active->value;
-                $customer->saveQuietly();
+            if (now()->month == $pivot->month_id && $pivot->amount_paid >= $pivot->amount) {
+                event(new CustomerSubscriptionUpdated($pivot));
             }
         });
 
