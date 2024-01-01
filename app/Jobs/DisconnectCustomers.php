@@ -20,16 +20,6 @@ class DisconnectCustomers implements ShouldQueue
     {
     }
 
-    public function middleware(): array
-    {
-        return [(new ThrottlesExceptions(1, 40))->backoff(now()->addHours(2))];
-    }
-
-    public function retryUntil(): DateTime
-    {
-        return now()->addDays(2);
-    }
-
     /**
      * Execute the job.
      *
@@ -43,7 +33,7 @@ class DisconnectCustomers implements ShouldQueue
                 ->openServer()
                 ->disconnect($batch);
         } catch (\Throwable $e) {
-            throw $e;
+            $this->fail($e);
         }
     }
 }
