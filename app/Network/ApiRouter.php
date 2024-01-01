@@ -180,7 +180,7 @@ class ApiRouter
 
     public function reconnect($customer)
     {
-        if (! $customer->mikrotik_id) return $this;
+        // if (! $customer->mikrotik_id) return $this;
         $query = (new Query('/ip/firewall/address-list/remove'));
         $query->equal('.id', $customer->mikrotik_id);
 
