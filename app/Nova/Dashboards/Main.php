@@ -7,6 +7,8 @@ use App\Nova\Metrics\BalancePerMonth;
 use App\Nova\Metrics\ExpectPerMonth;
 use App\Nova\Metrics\NewCustomer;
 use App\Nova\Metrics\RevenuePerMonth;
+use App\Nova\Metrics\TotalCash;
+use App\Nova\Metrics\TotalMpesa;
 use Laravel\Nova\Dashboards\Main as Dashboard;
 
 class Main extends Dashboard
@@ -24,6 +26,8 @@ class Main extends Dashboard
             new ExpectPerMonth,
             new RevenuePerMonth,
             new BalancePerMonth,
+            (new TotalMpesa)->width('2/3'),
+            (new TotalCash),
         ];
     }
 }

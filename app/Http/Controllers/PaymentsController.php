@@ -110,12 +110,12 @@ class PaymentsController extends Controller
             ]);
         }
 
-        // if (request('BusinessShortCode') !== config('services.mpesa.shortCode')) {
-        //     return response()->json([
-        //         'ResultCode' => 'C2B00015',
-        //         'ResultDesc' => 'Rejected',
-        //     ]);
-        // }
+        if (request('BusinessShortCode') !== $customer->house->district->paybill_number) {
+            return response()->json([
+                'ResultCode' => 'C2B00015',
+                'ResultDesc' => 'Rejected',
+            ]);
+        }
 
         if (request('TransAmount') < $customer->amount) {
             return response()->json([

@@ -34,7 +34,7 @@ class ThroughCash extends Value
     public function expectPerMonth($house)
     {
         return Subscription::whereIn('customer_id', Customer::where('house_id', $house)->pluck('id'))
-            ->where('session_id', session('year'))
+            ->where('session_id', config('app.year'))
             ->where('month_id', now()->month)
             ->where('payment_type', PaymentType::cash->value)
             ->sum('amount_paid');
