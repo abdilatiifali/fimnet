@@ -14,6 +14,7 @@ use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
+use App\Enums\PaymentType;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -86,7 +87,6 @@ class EventServiceProvider extends ServiceProvider
 
         Pivot::updating(function ($pivot) {
             $pivot->balance = $pivot->amount - $pivot->amount_paid;
-
             if ($pivot->amount_paid >= $pivot->amount && now()->month == $pivot->month_id) {
                 event(new CustomerSubscriptionUpdated($pivot));
 
