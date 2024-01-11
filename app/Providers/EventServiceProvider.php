@@ -110,6 +110,11 @@ class EventServiceProvider extends ServiceProvider
             ApiRouter::make($customer->router)
                 ->openServer()
                 ->updateQueue($customer);
+
+            ApiRouter::make($customer->router)
+                    ->openServer()
+                    ->checkIfTheIpIsNated($customer);
+                    
         });
 
     }
