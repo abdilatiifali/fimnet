@@ -31,9 +31,6 @@ class Kernel extends ConsoleKernel
 
         $schedule->command('create:session')
             ->yearly();
-
-        $schedule->command('queue:retry all')
-            ->everyThirtyMinutes();
     }
 
     /**

@@ -17,7 +17,7 @@ use LaravelDaily\Invoices\Invoice;
 
 // $url = config('app.url');
 
-Route::domain("client.fimnetplus.com")->group(function(){
+Route::domain("client.fimnetplus.net")->group(function(){
     Route::redirect('/', '/login');
     Route::get("/login", [AuthController::class, 'loginForm'])->middleware('guest:api');
     Route::post('/login', [AuthController::class, 'store'])->middleware('guest:api');

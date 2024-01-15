@@ -32,7 +32,7 @@ class UpdateSubscription
         ReconnectCustomer::dispatch($customer);
 
         if ($customer->due_date && optional($customer->house)->block_day !== now()->day) {
-            $customer->due_date = now()->addMonth()->format('d-M-Y');
+            // $customer->due_date = now()->addMonth()->format('d-M-Y');
             $customer->saveQuietly();
         }
 
