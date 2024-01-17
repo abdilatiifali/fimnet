@@ -19,14 +19,14 @@ class IncomePolicy
         return true;
     }
 
-    public function create()
+    public function create(User $user)
     {
-        return false;
+        return $user->isSuperAdmin();
     }
 
-    public function update()
+    public function update(User $user)
     {
-        return false;
+        return $user->isSuperAdmin();
     }
 
     /**

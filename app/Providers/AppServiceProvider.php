@@ -56,7 +56,9 @@ class AppServiceProvider extends ServiceProvider
         }
 
         if ($pivot->paid  && $pivot->payment_type == PaymentType::mpesa->value) {
-            throw new \Exception('You can only to select Cash as payment Type.');
+            if (! auth()->user()->isSuperAdmin()) {
+                throw new \Exception('You can only to select Cash as payment Type.');
+            }
         }
 
         if ($pivot->amount_paid && ! $pivot->paid) {
