@@ -37,7 +37,7 @@ class DisconnectPastClients extends Command
 
 
         $customerIds = Customer::where('status', '!=', CustomerStatus::blocked->value)
-                            ->where('due_date', '<=', now()->toDateString())->pluck('id');
+                            ->where('due_date', '<', now()->toDateString())->pluck('id');
 
         $batchSize = 30;
 
