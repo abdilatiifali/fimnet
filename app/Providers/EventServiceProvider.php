@@ -57,13 +57,20 @@ class EventServiceProvider extends ServiceProvider
                 $totalAmount += $item['amount'] * $item['quantity'];
             }
 
-            $subscription->amount = $totalAmount + $subscription->amount;
-            $subscription->balance = $totalAmount;
+            $subscription->update([
+                'amount' => $totalAmount + $subscription->amount,
+            ]);
 
-            $subscription->saveQuietly();
+            $newPivot = $subscription->fresh();
+
+            $newPivot->update([
+                'balance' => $newPivot->amount - $newPivot->amount_paid
+            ]);
+
         });
 
         Quotation::updating(function ($pivot) {
+            $customer = Customer::findOrFail($pivot->customer_id);
             $subscription = Subscription::where('customer_id', $pivot->customer_id)
                 ->where('month_id', now()->month)
                 ->where('session_id', config('app.year'))
@@ -74,9 +81,15 @@ class EventServiceProvider extends ServiceProvider
                 $totalAmount += $item['amount'] * $item['quantity'];
             }
 
-            $subscription->amount = $totalAmount;
-            $subscription->balance = $totalAmount;
-            $subscription->saveQuietly();
+            $subscription->update([
+                'amount' => $totalAmount + $customer->amount,
+            ]);
+
+            $newPivot = $subscription->fresh();
+
+            $newPivot->update([
+                'balance' => $newPivot->amount - $newPivot->amount_paid
+            ]);
         });
 
         Pivot::creating(function ($pivot) {
