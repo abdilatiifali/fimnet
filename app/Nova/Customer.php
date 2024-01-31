@@ -13,10 +13,12 @@ use App\Nova\Actions\SendSms;
 use App\Nova\Filters\DistrictFilter;
 use App\Nova\Filters\HouseFilter;
 use App\Nova\Filters\PackageFilter;
+use App\Nova\Filters\PaidFilter;
 use App\Nova\Filters\PaidType;
 use App\Nova\Filters\PaymentTypeFilter;
 use App\Nova\Filters\RouterFilter;
 use App\Nova\Filters\StatusType;
+use App\Nova\Lenses\PaidHouses;
 use App\Nova\Metrics\ActiveCustomers;
 use App\Nova\Metrics\BalancePerCustomer;
 use App\Nova\Metrics\NewCustomer;
@@ -184,6 +186,7 @@ class Customer extends Resource
     public function filters(Request $request)
     {
         return [
+            new PaidFilter,
             new PaidType,
             new PaymentTypeFilter,
             new HouseFilter,

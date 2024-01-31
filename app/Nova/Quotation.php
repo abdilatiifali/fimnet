@@ -3,6 +3,7 @@
 namespace App\Nova;
 
 use App\Nova\Actions\DownloadQuotation;
+use App\Nova\Metrics\QuotationRevenue;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Currency;
@@ -68,7 +69,9 @@ class Quotation extends Resource
      */
     public function cards(NovaRequest $request)
     {
-        return [];
+        return [
+            (new QuotationRevenue)->width('full'),
+        ];
     }
 
     /**
