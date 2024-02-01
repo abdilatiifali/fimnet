@@ -6,10 +6,11 @@ use App\Models\Income;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Nova\Actions\Actionable;
+use Laravel\Sanctum\HasApiTokens;
 
 class Customer extends Authenticatable
 {
-    use Actionable, HasFactory;
+    use Actionable, HasFactory, HasApiTokens;
 
     protected $guarded = [];
 

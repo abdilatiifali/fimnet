@@ -17,13 +17,9 @@ class SubscriptionResource extends JsonResource
         return [
             'id' => $this->id,
             'month' => $this->month,
-            'customerId' => $this->pivot->customer_id,
             'amount' => $this->pivot->amount,
-            'amount_paid' => $this->pivot->amount_paid,
-            'status' => $this->pivot->paid ? 'paid' : 'Incomplete',
-            'date' => $this->pivot->paid ? '45 minutes ago' : '',
-            'color' => $this->pivot->paid ? 'text-green-400 bg-green-400/10' : 'text-rose-400 bg-rose-400/10',
-            'dateTime' => $this->created_at,
+            'paid' => $this->pivot->paid,
+            'paymentType' => $this->pivot->paid ? $this->pivot->payment_type : null,
         ];
     }
 }

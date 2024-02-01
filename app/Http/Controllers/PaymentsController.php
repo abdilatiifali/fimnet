@@ -202,7 +202,7 @@ class PaymentsController extends Controller
     }
 
     public function stkdpush(Request $request)
-    {
+    {        
         $customer = auth()->user();
         $id = $customer->house->district->id;
         $area = $this->paybillNames[$id];
@@ -229,6 +229,12 @@ class PaymentsController extends Controller
                 'AccountReference' => $customer->mpesaId,
                 'TransactionDesc' => 'PAY MONTHLY INTERNEET FEE',
             ])->json();
+
+        if (request()->wantsJson()) {
+            return response()->json([
+                'status' => 'succesfully pushed',
+            ]);
+        }
 
         return redirect('/client');
     }

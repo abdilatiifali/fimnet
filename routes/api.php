@@ -5,7 +5,8 @@ use App\Http\Resources\CustomerResource;
 use App\Models\Customer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -27,15 +28,72 @@ Route::get('/customers/{houseId}', function (Request $request, $houseId) {
 
 Route::get('/client', function () {
     return CustomerResource::make(
-        \Auth::guard('api')->user()->load('subscriptions')
+       auth()->user()->load('subscriptions')
     );
-})->middleware(['auth:sanctum']);
+})->middleware('auth:sanctum');
 
-Route::get('/user', function () {
+Route::get("/profile", function () {
+    $customer = auth()->user();
     return response()->json([
-        'name' => \Auth::guard('api')->user()->name,
-        'photo' => \Auth::guard('api')->user()->defaultProfilePhotoUrl(),
+        'name' => $customer->name,
+        'phoneNumber' => $customer->phone_number,
+    ], 200);
+})->middleware('auth:sanctum');
+
+Route::post('/profile', function () {
+    $customer = auth()->user();
+
+    $customer->update([
+        'name' => request('name'),
+        'phone_number' => request('phoneNumber'),
+    ]);
+
+    if (request('password')) {
+        auth()->user()->update(['password' => bcrypt(request('password'))]);
+    }
+
+    return response()->json([
+        'name' => $customer->fresh()->name,
+        'phoneNumber' => $customer->fresh()->phone_number,
+    ], 200);
+
+})->middleware('auth:sanctum');
+
+Route::post('/payment', [PaymentsController::class, 'stkdpush'])->middleware('auth:sanctum');
+
+
+Route::get('/user', function (Request $request) {
+    return response()->json([
+        'name' => \Auth::user()->name,
+        'photo' => \Auth::user()->defaultProfilePhotoUrl(),
     ]);
 })->middleware(['auth:sanctum']);
 
-Route::post('/sdkpush', [PaymentsController::class, 'stkdpush'])->middleware(['auth:sanctum']);
+Route::post('/login', function (Request $request) {
+    $input = $request->validate([
+        'username' => 'required',
+        'password' => 'required',
+    ]);
+
+    $user = Customer::where('username', $request->username)->first();
+    
+    if (! \Auth::guard('api')->attempt($input)) {
+        return response()->json([
+            'message' => 'The crediantials is wrong',
+        ], 422);
+    }
+
+    $token = $user->createToken($request->device_name)->plainTextToken;
+
+    return response()->json([
+        'token' => $token,
+        'user' => $user->only('id', 'name', 'username'),
+    ], 201);
+});
+
+Route::post('/logout', function (Request $request) {
+    $user = $request->user()->currentAccessToken()->delete();
+    return response()->json([
+        'Message' => 'Logedout',
+    ], 200);
+})->middleware('auth:sanctum');
