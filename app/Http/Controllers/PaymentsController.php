@@ -225,7 +225,7 @@ class PaymentsController extends Controller
                 'PartyA' => $phoneNumber,
                 'PartyB' => $code,
                 'PhoneNumber' => $phoneNumber,
-                'CallBackURL' => "https://fimnetplus.com/callback",
+                'CallBackURL' => "https://fimnetplus.net/callback",
                 'AccountReference' => $customer->mpesaId,
                 'TransactionDesc' => 'PAY MONTHLY INTERNEET FEE',
             ])->json();
