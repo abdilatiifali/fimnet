@@ -42,24 +42,27 @@ class BulkCash implements ShouldQueue
             ? $this->updateSubscription($this->customer, $pivot)
             : $pivot = $this->createSubscription($this->customer);
 
-        event(new CustomerSubscriptionUpdated($pivot));
+
+        return $pivot;
+
+        // event(new CustomerSubscriptionUpdated($pivot));
     }
 
     public function updateSubscription($customer, $pivot)
     {
-        $pivot = $pivot->update([
+        $pivot->update([
             'amount_paid' => $pivot->amount,
             'payment_type' => PaymentType::cash->value,
             'balance' => 0,
             'paid' => true,
         ]);
 
-        return $pivot;
+        $this->updateDueDate($customer);
     }
 
     public function createSubscription($customer)
     {
-        return Subscription::create([
+        $pivot = Subscription::create([
             'customer_id' => $customer->id,
             'month_id' => now()->month,
             'session_id' => config('app.year'),
@@ -69,5 +72,24 @@ class BulkCash implements ShouldQueue
             'balance' => 0,
             'paid' => true,
         ]);
+
+        $this->updateDueDate($customer);
+
+        return $pivot;
+    }
+
+    public function updateDueDate($customer)
+    {
+        if ($customer->due_date && optional($customer->house)->block_day !== now()->day) {
+            $customerDueDate = $customer->due_date;
+            $now = now();
+            $remainingDays = $now->diffInDays($customerDueDate, false);
+
+            $customer->due_date = $remainingDays > 0 
+                            ? $customerDueDate->addMonths(1)->format('d-M-Y')
+                            : $now->addMonths(1)->format('d-M-Y');
+
+            $customer->saveQuietly();
+        }
     }
 }
