@@ -25,7 +25,9 @@ class PaidFilter extends Filter
     public function apply(NovaRequest $request, $query, $value)
     {
         return $query->whereHas('subscriptions', function ($subQuery) use ($value) {
-            $subQuery->where('paid', $value);
+            $subQuery->where('paid', $value)
+                    ->where('month_id', now()->month)
+                    ->where('session_id', config('app.year'));
         });
     }
 
