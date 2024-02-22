@@ -3,9 +3,10 @@
 use App\Http\Controllers\PaymentsController;
 use App\Http\Resources\CustomerResource;
 use App\Models\Customer;
+use App\Models\Package;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\ValidationException;
 /*
 |--------------------------------------------------------------------------
@@ -39,6 +40,35 @@ Route::get("/profile", function () {
         'phoneNumber' => $customer->phone_number,
     ], 200);
 })->middleware('auth:sanctum');
+
+
+Route::get("/services", function () {
+    $package = auth()->user()->package;
+
+    return response()->json([
+        'currentPackage' => $package,
+        'packages' => Package::where('price', '>', $package->price)
+                            ->get()
+     ]);
+})->middleware('auth:sanctum');
+
+Route::post("/services", function () {
+    $customer = auth()->user();
+
+    $newPackage = Package::findOrFail(request('serviceId'));
+
+    $customer->update([
+        'package_id' => $newPackage->id,
+    ]);
+
+    return response()->json([
+        'currentPackage' => $customer->fresh()->package,
+        'packages' => Package::where('price', '>', $newPackage->price)
+                        ->get()
+    ], 200);
+
+})->middleware('auth:sanctum');
+
 
 Route::post('/profile', function () {
     $customer = auth()->user();
