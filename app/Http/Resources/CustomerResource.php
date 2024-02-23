@@ -30,6 +30,7 @@ class CustomerResource extends JsonResource
         return [
             'name' => $this->name,
             'AccountNumber' => $this->mpesaId,
+            'balance' => $this->balance,
             'package' => [
                 'name' => $this->package->name,
                 'price' => number_format($this->package->price, 2),
