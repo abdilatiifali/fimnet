@@ -67,4 +67,9 @@ class Customer extends Authenticatable
     {
         return $this->belongsTo(Package::class);
     }
+    
+    public function tickets()
+    {
+        return $this->hasMany(Ticket::class);
+    }
 }

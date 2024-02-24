@@ -2,8 +2,10 @@
 
 use App\Http\Controllers\PaymentsController;
 use App\Http\Resources\CustomerResource;
+use App\Http\Resources\TicketResouce;
 use App\Models\Customer;
 use App\Models\Package;
+use App\Models\Ticket;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
@@ -126,4 +128,28 @@ Route::post('/logout', function (Request $request) {
     return response()->json([
         'Message' => 'Logedout',
     ], 200);
+})->middleware('auth:sanctum');
+
+
+Route::get('/tickets', function () {
+    $customer = auth()->user();
+
+    return response()->json([
+        'tickets' => TicketResouce::collection(
+            $customer->tickets()->latest()->take(10)->get()
+        )
+    ], 200);
+})->middleware('auth:sanctum');
+
+Route::post('/tickets', function () {
+    $customer = auth()->user();
+
+    Ticket::create([
+        'title' => request('title'),
+        'customer_id' => $customer->id,
+    ]);
+
+    return response()->json([
+        'message' => 'created succesfully',
+    ], 201);
 })->middleware('auth:sanctum');
