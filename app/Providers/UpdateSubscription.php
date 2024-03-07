@@ -27,7 +27,10 @@ class UpdateSubscription
     {
         $customer = Customer::findOrFail($event->pivot->customer_id);
 
+        if (! $customer->router_id) return;
+
         if (! $event->pivot->amount_paid > 0) return;
+
 
         ReconnectCustomer::dispatch($customer);
 
