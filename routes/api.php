@@ -144,12 +144,13 @@ Route::get('/tickets', function () {
 Route::post('/tickets', function () {
     $customer = auth()->user();
 
-    Ticket::create([
+    $ticket = Ticket::create([
         'title' => request('title'),
+        'descriptions' => request('description'),
         'customer_id' => $customer->id,
     ]);
 
     return response()->json([
-        'message' => 'created succesfully',
+        'ticket' => $ticket,
     ], 201);
 })->middleware('auth:sanctum');
