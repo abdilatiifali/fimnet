@@ -151,6 +151,9 @@ Route::post('/tickets', function () {
     ]);
 
     return response()->json([
-        'ticket' => $ticket,
+        'id' => $ticket->id,
+        'title' => $ticket->title,
+        'customer' => $ticket->fresh()->customer->name,
+        'createdAt' => $ticket->created_at->diffForHumans(),
     ], 201);
 })->middleware('auth:sanctum');
