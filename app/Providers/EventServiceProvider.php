@@ -15,6 +15,8 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
 use App\Enums\PaymentType;
+use App\Models\Ticket;
+use App\Models\SmsGateway;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -44,6 +46,16 @@ class EventServiceProvider extends ServiceProvider
     public function boot()
     {
         parent::boot();
+
+        Ticket::creating(function ($pivot) {
+            $customer = Customer::find($pivot->customer_id);
+
+            if (!$customer) return;
+
+            SmsGateway::sendComplain($customer);
+
+        });
+
 
         Quotation::creating(function ($pivot) {
             $customer = Customer::findOrFail($pivot->customer_id);

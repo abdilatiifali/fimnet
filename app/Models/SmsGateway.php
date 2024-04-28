@@ -34,6 +34,20 @@ class SmsGateway
         print_r($response);
     }
 
+    public static function solveComplain($customer)
+    {
+        $message = "Hello {$customer->name}. We've resolved the issue you reported, and your ticket is now closed. Thank you for trusting Fimnet.";
+
+        static::sendSmsApi($customer->phone_number, $message);
+    }
+
+    public static function sendComplain($customer)
+    {
+        $message = "Hello {$customer->name}. Thank you for reaching out. We've received your complaint and are actively working on resolving it. Rest assured, we'll address the issue as soon as possible. Thank you for your patience.";
+
+        static::sendSmsApi($customer->phone_number, $message);
+    }
+
     public static function sendSms($customer)
     {
         $paybill = $customer->house->district->paybill_number;

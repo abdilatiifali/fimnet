@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Enums\TicketEnum;
 
 class TicketResouce extends JsonResource
 {
@@ -19,6 +20,7 @@ class TicketResouce extends JsonResource
             'title' => $this->title,
             'createdAt' => $this->created_at->diffForHumans(),
             'customer' => $this->customer->name,
+            'status' => TicketEnum::from($this->status)->name,
         ];
     }
 }

@@ -6,11 +6,18 @@ use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Trix;
+use Laravel\Nova\Fields\DateTime;
+use Laravel\Nova\Fields\Badge;
 use Laravel\Nova\Fields\BelongsTo;
+use App\Enums\TicketEnum;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 class Ticket extends Resource
 {
+    public static $sort = [
+        'id' => 'desc'
+    ];
+
     /**
      * The model the resource corresponds to.
      *
@@ -34,6 +41,18 @@ class Ticket extends Resource
         'id',
     ];
 
+    public static function indexQuery(NovaRequest $request, $query)
+    {
+        if (empty($request->get('orderBy'))) {
+            $query->getQuery()->orders = [];
+
+            return $query
+                ->orderBy(key(static::$sort), reset(static::$sort));
+        }
+
+        return $query;
+    }
+
     /**
      * Get the fields displayed by the resource.
      *
@@ -45,8 +64,14 @@ class Ticket extends Resource
         return [
             ID::make()->sortable(),
             Text::make('Title'),
+            Badge::make('Status')->map([
+                TicketEnum::open->value => 'danger',
+                TicketEnum::closed->value => 'success',
+            ]),
+
             Trix::make('Descriptions')->nullable(),
             BelongsTo::make('Customer')->searchable(),
+            DateTime::make('Created At')->exceptOnForms(),
         ];
     }
 
@@ -58,7 +83,9 @@ class Ticket extends Resource
      */
     public function cards(NovaRequest $request)
     {
-        return [];
+        return [
+            (new \App\Nova\Metrics\TicketType)->width('full'),
+        ];
     }
 
     /**
@@ -91,6 +118,8 @@ class Ticket extends Resource
      */
     public function actions(NovaRequest $request)
     {
-        return [];
+        return [
+            new \App\Nova\Actions\CloseTicket,
+        ];
     }
 }
