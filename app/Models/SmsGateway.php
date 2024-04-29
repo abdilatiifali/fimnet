@@ -31,7 +31,7 @@ class SmsGateway
             'pass_type' => 'plain', //bm5 {base64 encode} or plain
         ])->json();
 
-        print_r($response);
+        // print_r($response);
     }
 
     public static function solveComplain($customer)
@@ -41,11 +41,13 @@ class SmsGateway
         static::sendSmsApi($customer->phone_number, $message);
     }
 
-    public static function sendComplain($customer)
+    public static function sendComplain($customer, $ticket)
     {
         $message = "Hello {$customer->name}. Thank you for reaching out. We've received your complaint and are actively working on resolving it. Rest assured, we'll address the issue as soon as possible. Thank you for your patience.";
 
         static::sendSmsApi($customer->phone_number, $message);
+
+        return $ticket;
     }
 
     public static function sendSms($customer)

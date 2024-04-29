@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\ValidationException;
+use App\Enums\TicketEnum;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -148,9 +150,8 @@ Route::post('/tickets', function () {
         'title' => request('title'),
         'descriptions' => request('description'),
         'customer_id' => $customer->id,
+        'status' => TicketEnum::open->value,
     ]);
 
-    return response()->json([
-        'ticket' => $ticket,
-    ], 201);
+    return response()->json($ticket, 201);
 })->middleware('auth:sanctum');

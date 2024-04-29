@@ -52,7 +52,7 @@ class EventServiceProvider extends ServiceProvider
 
             if (!$customer) return;
 
-            SmsGateway::sendComplain($customer);
+            SmsGateway::sendComplain($customer, $pivot);
 
         });
 
