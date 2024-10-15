@@ -2,7 +2,10 @@
     "name": "laravel/laravel",
     "type": "project",
     "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
+    "keywords": [
+        "framework",
+        "laravel"
+    ],
     "license": "MIT",
     "require": {
         "php": "^8.0.2",
@@ -10,7 +13,7 @@
         "evilfreelancer/routeros-api-php": "^1.5",
         "guzzlehttp/guzzle": "^7.2",
         "inspheric/nova-indicator-field": "^1.43",
-        "laravel/framework": "^9.11",
+        "laravel/framework": "^9.19",
         "laravel/nova": "^4.0",
         "laravel/sanctum": "^2.14.1",
         "laravel/tinker": "^2.7",
@@ -37,19 +40,21 @@
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
         },
-        "files": ["app/helpers.php"]
+        "files": [
+            "app/helpers.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests/"
         }
     },
-    "repositories": [
-        {
+    "repositories": {
+        "nova": {
             "type": "composer",
             "url": "https://nova.laravel.com"
         }
-    ],
+    },
     "scripts": {
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
@@ -76,11 +81,5 @@
         "sort-packages": true
     },
     "minimum-stability": "dev",
-    "prefer-stable": true,
-    "repositories": {
-        "nova": {
-            "type": "composer",
-            "url": "https://nova.laravel.com"
-        }
-    }
+    "prefer-stable": true
 }
