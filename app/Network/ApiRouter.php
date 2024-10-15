@@ -248,6 +248,15 @@ class ApiRouter
         return $this->addCustomerToQueue($customer);
     }
 
+    public function queueBatch($customers)
+    {
+        $customers = $customers->lazy();
+
+        foreach($customers as $customer) {
+            $this->updateQueue($customer);
+        }
+    }
+
     public function updateCustomer($customer, $item)
     {
         $package =
