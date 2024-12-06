@@ -42,7 +42,7 @@ class NewMonthlyCustomers implements ShouldQueue
                 $customer->subscriptions()->attach($this->month, [
                     'amount' => $customer->amount,
                     'balance' => $customer->amount,
-                    'session_id' => session('year'),
+                    'session_id' => config('app.year'),
                 ]);
             }
 
